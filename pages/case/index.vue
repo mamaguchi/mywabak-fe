@@ -88,7 +88,7 @@
                       <v-icon class="ml-n2">
                         mdi-plus
                       </v-icon>
-                      Export Table
+                      Export
                     </v-btn>
                   </v-toolbar>
                 </template>
@@ -144,6 +144,221 @@
                   <v-toolbar flat style="cursor:default">
                     <v-spacer />
 
+                    <!-- HSO DIALOG -->
+                    <v-dialog
+                      v-model="hsoDialog"
+                      max-width="700px"
+                      @keydown.enter="saveHSO"
+                      @click:outside="closeHSODialog"
+                    >
+                      <template #activator="{ on, attrs }">
+                        <v-btn
+                          small
+                          color="green"
+                          dark
+                          class="mr-2"
+                          v-bind="attrs"
+                          v-on="on"
+                          @click="createHSO"
+                        >
+                          <v-icon>
+                            mdi-plus
+                          </v-icon>
+                          HSO BARU
+                        </v-btn>
+                      </template>
+
+                      <v-card>
+                        <v-card-title>
+                          <span class="headline">HSO Baru</span>
+                        </v-card-title>
+
+                        <v-card-text>
+                          <v-container>
+                            <v-row justify="left">
+                              <!-- HSO DETAILS -->
+                              <v-col
+                                cols="12"
+                                md="4"
+                              >
+                                <v-text-field
+                                  v-model="hsoDuration"
+                                  label="Tempoh Kuarantin"
+                                />
+                              </v-col>
+                              <v-col
+                                cols="12"
+                                md="4"
+                              >
+                                <v-text-field
+                                  v-model="hsoBeginDt"
+                                  label="Tarikh Bermula Kuarantin"
+                                />
+                              </v-col>
+                              <v-col
+                                cols="12"
+                                md="4"
+                              >
+                                <v-text-field
+                                  v-model="hsoEndDt"
+                                  label="Tarikh Akhir Kuarantin"
+                                />
+                              </v-col>
+                              <v-col
+                                cols="12"
+                                md="12"
+                              >
+                                <v-text-field
+                                  v-model="hsoAddress"
+                                  label="Alamat Kuarantin"
+                                />
+                              </v-col>
+                              <v-col
+                                cols="12"
+                                md="4"
+                              >
+                                <v-text-field
+                                  v-model="hsoState"
+                                  label="Negeri Kuarantin"
+                                />
+                              </v-col>
+                              <v-col
+                                cols="12"
+                                md="4"
+                              >
+                                <v-text-field
+                                  v-model="hsoDistrict"
+                                  label="Daerah Kuarantin"
+                                />
+                              </v-col>
+                              <v-col
+                                cols="12"
+                                md="4"
+                              >
+                                <v-text-field
+                                  v-model="hsoLocality"
+                                  label="Localiti Kuarantin"
+                                />
+                              </v-col>
+                              <v-col
+                                cols="12"
+                                md="4"
+                              >
+                                <v-text-field
+                                  v-model="hsoTelWaris"
+                                  label="Telefon Waris"
+                                />
+                              </v-col>
+
+                              <!-- DIVIDER -->
+                              <v-col
+                                cols="12"
+                                md="12"
+                                sm="12"
+                                class="mx-auto"
+                              >
+                                <v-divider />
+                              </v-col>
+
+                              <!-- CLOSE CONTACTS FILTER -->
+                              <v-col
+                                cols="12"
+                                md="12"
+                              >
+                                <v-text-field
+                                  v-model="ccHSOFilter"
+                                  label="Filter"
+                                  outlined
+                                  class="mt-4"
+                                />
+                              </v-col>
+
+                              <!-- SELECTED CLOSE CONTACTS -->
+                              <div v-if="selectedCCForHSO.length !== 0">
+                                <v-list-item
+                                  v-for="item in selectedCCForHSO"
+                                  :key="item.title"
+                                  three-line
+                                >
+                                  <v-list-item-content>
+                                    <v-list-item-title>{{ item.title }}</v-list-item-title>
+                                    <v-list-item-subtitle>{{ item.subtitle }}</v-list-item-subtitle>
+                                  </v-list-item-content>
+
+                                  <v-list-item-action>
+                                    <v-checkbox value="true" />
+                                  </v-list-item-action>
+                                </v-list-item>
+                              </div>
+
+                              <!-- CLOSE CONTACTS LIST -->
+                              <v-col
+                                cols="12"
+                                md="12"
+                                sm="12"
+                                class="mx-auto"
+                              >
+                                <v-virtual-scroll
+                                  :items="cc"
+                                  :item-height="40"
+                                  height="300"
+                                >
+                                  <template #default="{ item }">
+                                    <v-list-item two-line>
+                                      <v-list-item-content>
+                                        <v-list-item-title>{{ item.name }}</v-list-item-title>
+                                        <v-list-item-subtitle>{{ item.ident }}</v-list-item-subtitle>
+                                      </v-list-item-content>
+
+                                      <v-list-item-action>
+                                        <v-checkbox :input-value="active" />
+                                      </v-list-item-action>
+                                    </v-list-item>
+                                  </template>
+                                </v-virtual-scroll>
+                              </v-col>
+
+                              <!-- DIVIDER -->
+                              <v-col
+                                cols="12"
+                                md="12"
+                                sm="12"
+                                class="mx-auto"
+                              >
+                                <v-divider />
+                              </v-col>
+                            </v-row>
+                          </v-container>
+                        </v-card-text>
+
+                        <v-card-actions class="mt-n7 mr-4">
+                          <v-spacer />
+                          <v-btn
+                            color="blue darken-1"
+                            text
+                            @click="closeHSODialog"
+                            @keydown.esc="closeHSODialog"
+                          >
+                            Cancel
+                          </v-btn>
+                          <v-btn
+                            color="blue darken-1"
+                            text
+                            @click="saveHSO"
+                          >
+                            Save
+                          </v-btn>
+                          <v-btn
+                            color="yellow darken-3"
+                            text
+                            :disabled="editedIndex===-1"
+                          >
+                            Delete
+                          </v-btn>
+                        </v-card-actions>
+                      </v-card>
+                    </v-dialog>
+
                     <!-- EDIT DIALOG -->
                     <v-dialog
                       v-model="editDialog"
@@ -168,15 +383,111 @@
                         </v-btn>
                       </template>
 
-                      <!-- <v-form @submit.prevent="submit"> -->
                       <v-card>
                         <v-card-title>
                           <span class="headline">{{ formTitle }}</span>
                         </v-card-title>
 
                         <v-card-text>
-                          <v-form @submit.prevent="submit">
-                            <v-container>
+                          <v-container>
+                            <!-- SEARCH EXISTING PEOPLE -->
+                            <v-row justify="center">
+                              <v-col
+                                cols="12"
+                                md="8"
+                                sm="8"
+                                class="mx-auto"
+                              >
+                                <v-text-field
+                                  v-model="searchEP"
+                                  prepend-inner-icon="mdi-magnify"
+                                  outlined
+                                  flat
+                                  class="rounded-pill"
+                                  placeholder="Masukkan IC/Passport"
+                                  @keydown.enter="doSearchEP"
+                                  @keydown.esc="searchEP=''"
+                                >
+                                  <template #append>
+                                    <v-icon
+                                      v-show="searchEP"
+                                      class="mr-1 mt-n2"
+                                      @click="searchEP=''"
+                                    >
+                                      mdi-close
+                                    </v-icon>
+                                    <v-fade-transition leave-absolute>
+                                      <div
+                                        v-if="searchingEP"
+                                        style="height:40px"
+                                        class="mt-n2 ml-1"
+                                      >
+                                        <v-divider
+                                          vertical
+                                        />
+                                        <v-progress-circular
+                                          class="mt-n6 ml-6 mr-8"
+                                          size="24"
+                                          color="info"
+                                          indeterminate
+                                        />
+                                      </div>
+                                      <div
+                                        v-else
+                                        style="height:40px"
+                                        class="mt-n2 ml-1"
+                                      >
+                                        <v-divider
+                                          vertical
+                                        />
+                                        <div
+                                          class="mt-n7 ml-4 mr-2 search_onhover_highlight"
+                                          style="cursor:pointer"
+                                          @click="doSearchEP"
+                                        >
+                                          SEARCH
+                                        </div>
+                                      </div>
+                                    </v-fade-transition>
+                                  </template>
+                                </v-text-field>
+                              </v-col>
+                            </v-row>
+
+                            <!-- SEARCH RESULT -->
+                            <v-row>
+                              <v-col
+                                cols="12"
+                                md="8"
+                                sm="8"
+                                class="mx-auto"
+                              >
+                                <v-data-table
+                                  v-if="searchEPRes.length"
+                                  dense
+                                  style="cursor:pointer"
+                                  :headers="epHeaders"
+                                  :items="searchEPRes"
+                                  item-key="ident"
+                                  :page.sync="epPage"
+                                  :items-per-page="epItemsPerPage"
+                                  multi-sort
+                                  hide-default-footer
+                                  class="elevation-3 white"
+                                >
+                                  <!-- TABLE HEADER CONFIGURATION -->
+                                  <template #[`header.name`]="{ header }">
+                                    <span class="mb-n6 white--text font-weight-black">{{ header.text }}</span>
+                                  </template>
+                                  <template #[`header.ident`]="{ header }">
+                                    <span class="white--text font-weight-medium">{{ header.text }}</span>
+                                  </template>
+                                </v-data-table>
+                              </v-col>
+                            </v-row>
+
+                            <!-- FORM: CREATE NEW PEOPLE -->
+                            <v-form @submit.prevent="submit">
                               <v-row>
                                 <v-col
                                   cols="12"
@@ -468,8 +779,8 @@
                                   <div v-show="false" />
                                 </v-col>
                               </v-row>
-                            </v-container>
-                          </v-form>
+                            </v-form>
+                          </v-container>
                         </v-card-text>
 
                         <v-card-actions>
@@ -499,7 +810,6 @@
                           </v-btn>
                         </v-card-actions>
                       </v-card>
-                      <!-- </v-form> -->
                     </v-dialog>
 
                     <!-- DELETE DIALOG -->
@@ -521,16 +831,17 @@
                       </v-card>
                     </v-dialog>
 
+                    <!-- EXPORT -->
                     <v-btn
                       small
                       color="primary"
                       dark
                       @click="exportXlsx"
                     >
-                      <v-icon class="ml-n2">
+                      <v-icon>
                         mdi-plus
                       </v-icon>
-                      Export Table
+                      Export
                     </v-btn>
                   </v-toolbar>
                 </template>
@@ -558,7 +869,7 @@ export default {
     return {
       // GENERAL
       tab: null,
-      tabItems: ['Positive Cases', 'Close Contacts', 'HSO'],
+      tabItems: ['Overview', 'Positive Cases', 'Close Contacts'],
       page: 1,
       pageCount: 0,
       itemsPerPage: 10,
@@ -566,7 +877,7 @@ export default {
       // TAB: POSITIVE CASES
       pcHeaders: [
         { text: 'Name', value: 'name', align: 'start', sortable: true, class: 'success', width: '160px' },
-        { text: 'No', value: 'ident', sortable: true, class: 'success', width: '100px' }
+        { text: 'IC/Passport', value: 'ident', sortable: true, class: 'success', width: '100px' }
       ],
       posCases: [
         { name: 'patient1', ident: '123' },
@@ -576,7 +887,7 @@ export default {
       // TAB: CLOSE CONTACTS
       ccHeaders: [
         { text: 'Name', value: 'name', align: 'start', sortable: true, class: 'success', width: '160px' },
-        { text: 'No', value: 'ident', sortable: true, class: 'success', width: '100px' }
+        { text: 'IC/Passport', value: 'ident', sortable: true, class: 'success', width: '100px' }
       ],
       cc: [
         { name: 'patient3', ident: '12345' },
@@ -638,13 +949,34 @@ export default {
         postalCode: '',
         state: '',
         supportVac: ''
-      }
+      },
+      searchEP: '',
+      searchingEP: false,
+      epPage: 1,
+      epItemsPerPage: 5,
+      searchEPRes: [],
+      epHeaders: [
+        { text: 'Name', value: 'name', align: 'start', sortable: true, class: 'success', width: '160px' },
+        { text: 'IC/Passport', value: 'ident', sortable: true, class: 'success', width: '100px' }
+      ],
+      // HSO
+      hsoDialog: false,
+      hsoDuration: '',
+      hsoBeginDt: '',
+      hsoEndDt: '',
+      hsoAddress: '',
+      hsoState: '',
+      hsoDistrict: '',
+      hsoLocality: '',
+      hsoTelWaris: '',
+      ccHSOFilter: '',
+      selectedCCForHSO: []
     }
   },
 
   computed: {
     formTitle () {
-      return this.editedIndex === -1 ? 'New Vaccination' : 'Edit Vaccination'
+      return this.ccEditedIndex === -1 ? 'New Close Contact' : 'Edit Close Contact'
     }
   },
 
@@ -702,6 +1034,22 @@ export default {
           document.querySelector('#output').src = picResizedEncoded
         }
       }
+    },
+
+    doSearchEP () {
+      //
+    },
+
+    createHSO () {
+      //
+    },
+
+    saveHSO () {
+      //
+    },
+
+    closeHSODialog () {
+      //
     }
 
   }
