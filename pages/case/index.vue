@@ -39,7 +39,11 @@
           fluid
           fill-height
         >
+          <!--                -->
+          <!--                -->
           <!-- POSITIVE CASES -->
+          <!--                -->
+          <!--                -->
           <v-row
             v-if="tabitem === 'Positive Cases'"
             justify="center"
@@ -47,52 +51,54 @@
           >
             <v-col
               cols="12"
-              md="6"
-              sm="6"
+              md="12"
+              sm="12"
               class="mx-auto"
             >
-              <v-data-table
-                v-if="posCases.length"
-                dense
-                style="cursor:pointer"
-                :headers="pcHeaders"
-                :items="posCases"
-                item-key="ident"
-                :page.sync="page"
-                :items-per-page="itemsPerPage"
-                multi-sort
-                hide-default-footer
-                class="elevation-3 white"
-                @page-count="pageCount = $event"
-                @click:row="tblRowClicked"
-              >
-                <!-- TABLE HEADER CONFIGURATION -->
-                <template #[`header.name`]="{ header }">
-                  <span class="mb-n6 white--text font-weight-black">{{ header.text }}</span>
-                </template>
-                <template #[`header.ident`]="{ header }">
-                  <span class="white--text font-weight-medium">{{ header.text }}</span>
-                </template>
+              <v-container fluid>
+                <v-data-table
+                  v-if="posCases.length"
+                  dense
+                  style="cursor:pointer"
+                  :headers="pcHeaders"
+                  :items="posCases"
+                  item-key="ident"
+                  :page.sync="page"
+                  :items-per-page="itemsPerPage"
+                  multi-sort
+                  hide-default-footer
+                  class="elevation-3 white"
+                  @page-count="pageCount = $event"
+                  @click:row="tblRowClicked"
+                >
+                  <!-- TABLE HEADER CONFIGURATION -->
+                  <template #[`header.name`]="{ header }">
+                    <span class="mb-n6 white--text font-weight-black">{{ header.text }}</span>
+                  </template>
+                  <template #[`header.ident`]="{ header }">
+                    <span class="white--text font-weight-medium">{{ header.text }}</span>
+                  </template>
 
-                <!-- TOOLBAR -->
-                <template #top>
-                  <v-toolbar flat style="cursor:default">
-                    <v-spacer />
+                  <!-- TOOLBAR -->
+                  <template #top>
+                    <v-toolbar flat style="cursor:default">
+                      <v-spacer />
 
-                    <v-btn
-                      small
-                      color="primary"
-                      dark
-                      @click="exportXlsx"
-                    >
-                      <v-icon class="ml-n2">
-                        mdi-plus
-                      </v-icon>
-                      Export
-                    </v-btn>
-                  </v-toolbar>
-                </template>
-              </v-data-table>
+                      <v-btn
+                        small
+                        color="primary"
+                        dark
+                        @click="exportXlsx"
+                      >
+                        <v-icon class="ml-n2">
+                          mdi-plus
+                        </v-icon>
+                        Export
+                      </v-btn>
+                    </v-toolbar>
+                  </template>
+                </v-data-table>
+              </v-container>
             </v-col>
 
             <v-col cols="12" class="mx-auto">
@@ -104,748 +110,784 @@
             </v-col>
           </v-row>
 
+          <!--                -->
+          <!--                -->
           <!-- CLOSE CONTACTS -->
+          <!--                -->
+          <!--                -->
           <v-row
             v-if="tabitem === 'Close Contacts'"
             justify="center"
             class="mt-10 mx-4"
           >
+            <!-- LIST OF CLOSE CONTACTS -->
             <v-col
               cols="12"
-              md="6"
-              sm="6"
+              md="12"
+              sm="12"
               class="mx-auto"
             >
-              <v-data-table
-                v-if="cc.length"
-                dense
-                style="cursor:pointer"
-                :headers="ccHeaders"
-                :items="cc"
-                item-key="ident"
-                :page.sync="page"
-                :items-per-page="itemsPerPage"
-                multi-sort
-                hide-default-footer
-                class="elevation-3 white"
-                @page-count="pageCount = $event"
-                @click:row="tblRowClicked"
-              >
-                <!-- TABLE HEADER CONFIGURATION -->
-                <template #[`header.name`]="{ header }">
-                  <span class="mb-n6 white--text font-weight-black">{{ header.text }}</span>
-                </template>
-                <template #[`header.ident`]="{ header }">
-                  <span class="white--text font-weight-medium">{{ header.text }}</span>
-                </template>
+              <v-container fluid>
+                <v-data-table
+                  v-if="cc.length"
+                  dense
+                  style="cursor:pointer"
+                  :headers="ccHeaders"
+                  :items="cc"
+                  item-key="ident"
+                  :page.sync="page"
+                  :items-per-page="itemsPerPage"
+                  multi-sort
+                  hide-default-footer
+                  class="elevation-3 white"
+                  @page-count="pageCount = $event"
+                  @click:row="tblRowClicked"
+                >
+                  <!-- TABLE HEADER CONFIGURATION -->
+                  <template #[`header.name`]="{ header }">
+                    <span class="mb-n6 white--text font-weight-black">{{ header.text }}</span>
+                  </template>
+                  <template #[`header.ident`]="{ header }">
+                    <span class="white--text font-weight-medium">{{ header.text }}</span>
+                  </template>
 
-                <!-- TOOLBAR -->
-                <template #top>
-                  <v-toolbar flat style="cursor:default">
-                    <v-spacer />
+                  <!-- TOOLBAR -->
+                  <template #top>
+                    <v-toolbar flat style="cursor:default">
+                      <v-spacer />
 
-                    <!-- HSO DIALOG -->
-                    <v-dialog
-                      v-model="hsoDialog"
-                      max-width="700px"
-                      @keydown.enter="saveHSO"
-                      @click:outside="closeHSODialog"
-                    >
-                      <template #activator="{ on, attrs }">
-                        <v-btn
-                          small
-                          color="green"
-                          dark
-                          class="mr-2"
-                          v-bind="attrs"
-                          v-on="on"
-                          @click="createHSO"
-                        >
-                          <v-icon>
-                            mdi-plus
-                          </v-icon>
-                          HSO BARU
-                        </v-btn>
-                      </template>
-
-                      <v-card>
-                        <v-card-title>
-                          <span class="headline">HSO Baru</span>
-                        </v-card-title>
-
-                        <v-card-text>
-                          <v-container>
-                            <v-row justify="left">
-                              <!-- HSO DETAILS -->
-                              <v-col
-                                cols="12"
-                                md="4"
-                              >
-                                <v-text-field
-                                  v-model="hsoDuration"
-                                  label="Tempoh Kuarantin"
-                                />
-                              </v-col>
-                              <v-col
-                                cols="12"
-                                md="4"
-                              >
-                                <v-text-field
-                                  v-model="hsoBeginDt"
-                                  label="Tarikh Bermula Kuarantin"
-                                />
-                              </v-col>
-                              <v-col
-                                cols="12"
-                                md="4"
-                              >
-                                <v-text-field
-                                  v-model="hsoEndDt"
-                                  label="Tarikh Akhir Kuarantin"
-                                />
-                              </v-col>
-                              <v-col
-                                cols="12"
-                                md="12"
-                              >
-                                <v-text-field
-                                  v-model="hsoAddress"
-                                  label="Alamat Kuarantin"
-                                />
-                              </v-col>
-                              <v-col
-                                cols="12"
-                                md="4"
-                              >
-                                <v-text-field
-                                  v-model="hsoState"
-                                  label="Negeri Kuarantin"
-                                />
-                              </v-col>
-                              <v-col
-                                cols="12"
-                                md="4"
-                              >
-                                <v-text-field
-                                  v-model="hsoDistrict"
-                                  label="Daerah Kuarantin"
-                                />
-                              </v-col>
-                              <v-col
-                                cols="12"
-                                md="4"
-                              >
-                                <v-text-field
-                                  v-model="hsoLocality"
-                                  label="Localiti Kuarantin"
-                                />
-                              </v-col>
-                              <v-col
-                                cols="12"
-                                md="4"
-                              >
-                                <v-text-field
-                                  v-model="hsoTelWaris"
-                                  label="Telefon Waris"
-                                />
-                              </v-col>
-
-                              <!-- DIVIDER -->
-                              <v-col
-                                cols="12"
-                                md="12"
-                                sm="12"
-                                class="mx-auto"
-                              >
-                                <v-divider />
-                              </v-col>
-
-                              <!-- CLOSE CONTACTS FILTER -->
-                              <v-col
-                                cols="12"
-                                md="12"
-                              >
-                                <v-text-field
-                                  v-model="ccHSOFilter"
-                                  label="Filter"
-                                  outlined
-                                  class="mt-4"
-                                />
-                              </v-col>
-
-                              <!-- SELECTED CLOSE CONTACTS -->
-                              <div v-if="selectedCCForHSO.length !== 0">
-                                <v-list-item
-                                  v-for="item in selectedCCForHSO"
-                                  :key="item.title"
-                                  three-line
-                                >
-                                  <v-list-item-content>
-                                    <v-list-item-title>{{ item.title }}</v-list-item-title>
-                                    <v-list-item-subtitle>{{ item.subtitle }}</v-list-item-subtitle>
-                                  </v-list-item-content>
-
-                                  <v-list-item-action>
-                                    <v-checkbox value="true" />
-                                  </v-list-item-action>
-                                </v-list-item>
-                              </div>
-
-                              <!-- CLOSE CONTACTS LIST -->
-                              <v-col
-                                cols="12"
-                                md="12"
-                                sm="12"
-                                class="mx-auto"
-                              >
-                                <v-virtual-scroll
-                                  :items="cc"
-                                  :item-height="40"
-                                  height="300"
-                                >
-                                  <template #default="{ item }">
-                                    <v-list-item two-line>
-                                      <v-list-item-content>
-                                        <v-list-item-title>{{ item.name }}</v-list-item-title>
-                                        <v-list-item-subtitle>{{ item.ident }}</v-list-item-subtitle>
-                                      </v-list-item-content>
-
-                                      <v-list-item-action>
-                                        <v-checkbox :input-value="active" />
-                                      </v-list-item-action>
-                                    </v-list-item>
-                                  </template>
-                                </v-virtual-scroll>
-                              </v-col>
-
-                              <!-- DIVIDER -->
-                              <v-col
-                                cols="12"
-                                md="12"
-                                sm="12"
-                                class="mx-auto"
-                              >
-                                <v-divider />
-                              </v-col>
-                            </v-row>
-                          </v-container>
-                        </v-card-text>
-
-                        <v-card-actions class="mt-n7 mr-4">
-                          <v-spacer />
+                      <!-- ADD NEW HSO DIALOG -->
+                      <v-dialog
+                        v-model="hsoDialog"
+                        max-width="700px"
+                        @keydown.enter="saveHSO"
+                        @click:outside="closeHSODialog"
+                      >
+                        <template #activator="{ on, attrs }">
                           <v-btn
-                            color="blue darken-1"
-                            text
-                            @click="closeHSODialog"
-                            @keydown.esc="closeHSODialog"
+                            small
+                            color="green"
+                            dark
+                            class="mr-2"
+                            v-bind="attrs"
+                            v-on="on"
+                            @click="createHSO"
                           >
-                            Cancel
+                            <v-icon>
+                              mdi-plus
+                            </v-icon>
+                            HSO BARU
                           </v-btn>
-                          <v-btn
-                            color="blue darken-1"
-                            text
-                            @click="saveHSO"
-                          >
-                            Save
-                          </v-btn>
-                          <v-btn
-                            color="yellow darken-3"
-                            text
-                            :disabled="editedIndex===-1"
-                          >
-                            Delete
-                          </v-btn>
-                        </v-card-actions>
-                      </v-card>
-                    </v-dialog>
+                        </template>
 
-                    <!-- EDIT DIALOG -->
-                    <v-dialog
-                      v-model="editDialog"
-                      max-width="700px"
-                      @keydown.enter="saveCC"
-                      @click:outside="closeCCEditDialog"
-                    >
-                      <template #activator="{ on, attrs }">
-                        <v-btn
-                          small
-                          color="amber"
-                          dark
-                          v-bind="attrs"
-                          class="mr-2"
-                          v-on="on"
-                          @click="addCC"
-                        >
-                          <v-icon class="ml-n2">
-                            mdi-plus
-                          </v-icon>
-                          Add Contact
-                        </v-btn>
-                      </template>
+                        <v-card>
+                          <v-card-title>
+                            <span class="headline">HSO Baru</span>
+                          </v-card-title>
 
-                      <v-card>
-                        <v-card-title>
-                          <span class="headline">{{ formTitle }}</span>
-                        </v-card-title>
-
-                        <v-card-text>
-                          <v-container>
-                            <!-- SEARCH EXISTING PEOPLE -->
-                            <v-row justify="center">
-                              <v-col
-                                cols="12"
-                                md="8"
-                                sm="8"
-                                class="mx-auto"
-                              >
-                                <v-text-field
-                                  v-model="searchEP"
-                                  prepend-inner-icon="mdi-magnify"
-                                  outlined
-                                  flat
-                                  class="rounded-pill"
-                                  placeholder="Masukkan IC/Passport"
-                                  @keydown.enter="doSearchEP"
-                                  @keydown.esc="searchEP=''"
+                          <v-card-text>
+                            <v-container>
+                              <v-row justify="left">
+                                <!-- NEW HSO FORM -->
+                                <v-col
+                                  cols="12"
+                                  md="4"
+                                  sm="10"
+                                  class="text-center mx-auto"
                                 >
-                                  <template #append>
-                                    <v-icon
-                                      v-show="searchEP"
-                                      class="mr-1 mt-n2"
-                                      @click="searchEP=''"
-                                    >
-                                      mdi-close
-                                    </v-icon>
-                                    <v-fade-transition leave-absolute>
-                                      <div
-                                        v-if="searchingEP"
-                                        style="height:40px"
-                                        class="mt-n2 ml-1"
+                                  <v-text-field
+                                    v-model="hsoDuration"
+                                    label="Tempoh Kuarantin"
+                                  />
+                                </v-col>
+                                <v-col
+                                  cols="12"
+                                  md="4"
+                                  sm="10"
+                                  class="text-center mx-auto"
+                                >
+                                  <v-text-field
+                                    v-model="hsoBeginDt"
+                                    label="Tarikh Bermula Kuarantin"
+                                  />
+                                </v-col>
+                                <v-col
+                                  cols="12"
+                                  md="4"
+                                  sm="10"
+                                  class="text-center mx-auto"
+                                >
+                                  <v-text-field
+                                    v-model="hsoEndDt"
+                                    label="Tarikh Akhir Kuarantin"
+                                  />
+                                </v-col>
+                                <v-col
+                                  cols="12"
+                                  md="12"
+                                  sm="10"
+                                  class="text-center mx-auto"
+                                >
+                                  <v-text-field
+                                    v-model="hsoAddress"
+                                    label="Alamat Kuarantin"
+                                  />
+                                </v-col>
+                                <v-col
+                                  cols="12"
+                                  md="4"
+                                  sm="10"
+                                  class="text-center mx-auto"
+                                >
+                                  <v-text-field
+                                    v-model="hsoState"
+                                    label="Negeri Kuarantin"
+                                  />
+                                </v-col>
+                                <v-col
+                                  cols="12"
+                                  md="4"
+                                  sm="10"
+                                  class="text-center mx-auto"
+                                >
+                                  <v-text-field
+                                    v-model="hsoDistrict"
+                                    label="Daerah Kuarantin"
+                                  />
+                                </v-col>
+                                <v-col
+                                  cols="12"
+                                  md="4"
+                                  sm="10"
+                                  class="text-center mx-auto"
+                                >
+                                  <v-text-field
+                                    v-model="hsoLocality"
+                                    label="Localiti Kuarantin"
+                                  />
+                                </v-col>
+                                <v-col
+                                  cols="12"
+                                  md="4"
+                                  sm="10"
+                                  class="text-center mx-auto"
+                                >
+                                  <v-text-field
+                                    v-model="hsoTelWaris"
+                                    label="Telefon Waris"
+                                  />
+                                </v-col>
+
+                                <!-- DIVIDER -->
+                                <v-col
+                                  cols="12"
+                                  md="12"
+                                  sm="12"
+                                  class="mx-auto"
+                                >
+                                  <v-divider />
+                                </v-col>
+
+                                <!-- CLOSE CONTACTS FILTER -->
+                                <v-col
+                                  cols="12"
+                                  md="4"
+                                  sm="10"
+                                  class="text-center mx-auto"
+                                >
+                                  <v-text-field
+                                    v-model="ccHSOFilter"
+                                    label="Filter"
+                                    outlined
+                                    class="mt-4"
+                                  />
+                                </v-col>
+
+                                <!-- SELECTED CLOSE CONTACTS -->
+                                <div v-if="selectedCCForHSO.length !== 0">
+                                  <v-list-item
+                                    v-for="item in selectedCCForHSO"
+                                    :key="item.title"
+                                    three-line
+                                  >
+                                    <v-list-item-content>
+                                      <v-list-item-title>{{ item.title }}</v-list-item-title>
+                                      <v-list-item-subtitle>{{ item.subtitle }}</v-list-item-subtitle>
+                                    </v-list-item-content>
+
+                                    <v-list-item-action>
+                                      <v-checkbox value="true" />
+                                    </v-list-item-action>
+                                  </v-list-item>
+                                </div>
+
+                                <!-- CLOSE CONTACTS LIST -->
+                                <v-col
+                                  cols="12"
+                                  md="12"
+                                  sm="12"
+                                  class="mx-auto"
+                                >
+                                  <v-virtual-scroll
+                                    :items="cc"
+                                    :item-height="40"
+                                    height="300"
+                                  >
+                                    <template #default="{ item }">
+                                      <v-list-item two-line>
+                                        <v-list-item-content>
+                                          <v-list-item-title>{{ item.name }}</v-list-item-title>
+                                          <v-list-item-subtitle>{{ item.ident }}</v-list-item-subtitle>
+                                        </v-list-item-content>
+
+                                        <v-list-item-action>
+                                          <v-checkbox :input-value="active" />
+                                        </v-list-item-action>
+                                      </v-list-item>
+                                    </template>
+                                  </v-virtual-scroll>
+                                </v-col>
+
+                                <!-- DIVIDER -->
+                                <v-col
+                                  cols="12"
+                                  md="12"
+                                  sm="12"
+                                  class="mx-auto"
+                                >
+                                  <v-divider />
+                                </v-col>
+                              </v-row>
+                            </v-container>
+                          </v-card-text>
+
+                          <v-card-actions class="mt-n7 mr-4">
+                            <v-spacer />
+                            <v-btn
+                              color="blue darken-1"
+                              text
+                              @click="closeHSODialog"
+                              @keydown.esc="closeHSODialog"
+                            >
+                              Cancel
+                            </v-btn>
+                            <v-btn
+                              color="blue darken-1"
+                              text
+                              @click="saveHSO"
+                            >
+                              Save
+                            </v-btn>
+                            <v-btn
+                              color="yellow darken-3"
+                              text
+                              :disabled="editedIndex===-1"
+                            >
+                              Delete
+                            </v-btn>
+                          </v-card-actions>
+                        </v-card>
+                      </v-dialog>
+
+                      <!-- NEW CLOSE CONTACT DIALOG -->
+                      <v-dialog
+                        v-model="ccEditDialog"
+                        max-width="700px"
+                        @keydown.enter="saveCC"
+                        @click:outside="closeCCEditDialog"
+                      >
+                        <template #activator="{ on, attrs }">
+                          <v-btn
+                            small
+                            color="amber"
+                            dark
+                            v-bind="attrs"
+                            class="mr-2"
+                            v-on="on"
+                            @click="addCC"
+                          >
+                            <v-icon class="ml-n2">
+                              mdi-plus
+                            </v-icon>
+                            Add Contact
+                          </v-btn>
+                        </template>
+
+                        <v-card>
+                          <v-card-title>
+                            <span class="headline">{{ formTitle }}</span>
+                          </v-card-title>
+
+                          <v-card-text>
+                            <v-container>
+                              <!-- SEARCH EXISTING PEOPLE -->
+                              <v-row justify="center">
+                                <v-col
+                                  cols="12"
+                                  md="6"
+                                  sm="10"
+                                  class="text-center mx-auto"
+                                >
+                                  <v-text-field
+                                    v-model="searchEP"
+                                    prepend-inner-icon="mdi-magnify"
+                                    outlined
+                                    flat
+                                    class="rounded-pill"
+                                    placeholder="Masukkan IC/Passport"
+                                    @keydown.enter="doSearchEP"
+                                    @keydown.esc="searchEP=''"
+                                  >
+                                    <template #append>
+                                      <v-icon
+                                        v-show="searchEP"
+                                        class="mr-1 mt-n2"
+                                        @click="searchEP=''"
                                       >
-                                        <v-divider
-                                          vertical
-                                        />
-                                        <v-progress-circular
-                                          class="mt-n6 ml-6 mr-8"
-                                          size="24"
-                                          color="info"
-                                          indeterminate
-                                        />
-                                      </div>
-                                      <div
-                                        v-else
-                                        style="height:40px"
-                                        class="mt-n2 ml-1"
-                                      >
-                                        <v-divider
-                                          vertical
-                                        />
+                                        mdi-close
+                                      </v-icon>
+                                      <v-fade-transition leave-absolute>
                                         <div
-                                          class="mt-n7 ml-4 mr-2 search_onhover_highlight"
-                                          style="cursor:pointer"
-                                          @click="doSearchEP"
+                                          v-if="searchingEP"
+                                          style="height:40px"
+                                          class="mt-n2 ml-1"
                                         >
-                                          SEARCH
+                                          <v-divider
+                                            vertical
+                                          />
+                                          <v-progress-circular
+                                            class="mt-n6 ml-6 mr-8"
+                                            size="24"
+                                            color="info"
+                                            indeterminate
+                                          />
                                         </div>
-                                      </div>
-                                    </v-fade-transition>
-                                  </template>
-                                </v-text-field>
-                              </v-col>
-                            </v-row>
+                                        <div
+                                          v-else
+                                          style="height:40px"
+                                          class="mt-n2 ml-1"
+                                        >
+                                          <v-divider
+                                            vertical
+                                          />
+                                          <div
+                                            class="mt-n7 ml-4 mr-2 search_onhover_highlight"
+                                            style="cursor:pointer"
+                                            @click="doSearchEP"
+                                          >
+                                            SEARCH
+                                          </div>
+                                        </div>
+                                      </v-fade-transition>
+                                    </template>
+                                  </v-text-field>
+                                </v-col>
+                              </v-row>
 
-                            <!-- SEARCH RESULT -->
-                            <v-row>
-                              <v-col
-                                cols="12"
-                                md="8"
-                                sm="8"
-                                class="mx-auto"
-                              >
-                                <v-data-table
-                                  v-if="searchEPRes.length"
-                                  dense
-                                  style="cursor:pointer"
-                                  :headers="epHeaders"
-                                  :items="searchEPRes"
-                                  item-key="ident"
-                                  :page.sync="epPage"
-                                  :items-per-page="epItemsPerPage"
-                                  multi-sort
-                                  hide-default-footer
-                                  class="elevation-3 white"
-                                >
-                                  <!-- TABLE HEADER CONFIGURATION -->
-                                  <template #[`header.name`]="{ header }">
-                                    <span class="mb-n6 white--text font-weight-black">{{ header.text }}</span>
-                                  </template>
-                                  <template #[`header.ident`]="{ header }">
-                                    <span class="white--text font-weight-medium">{{ header.text }}</span>
-                                  </template>
-                                </v-data-table>
-                              </v-col>
-                            </v-row>
-
-                            <!-- FORM: CREATE NEW PEOPLE -->
-                            <v-form @submit.prevent="submit">
+                              <!-- CLOSE CONTACTS SEARCH RESULT -->
                               <v-row>
                                 <v-col
                                   cols="12"
-                                  md="6"
+                                  md="12"
+                                  sm="12"
+                                  class="mx-auto"
                                 >
-                                  <v-text-field
-                                    id="profileName"
-                                    v-model="editedProfile.name"
-                                    label="Name"
-                                    :rules="profileNameRules"
-                                    :error-messages="requiredProfErrMsg.name"
-                                    @change="requiredProfErrMsg.name=''"
-                                  />
-                                </v-col>
-
-                                <v-col
-                                  cols="12"
-                                  md="6"
-                                >
-                                  <v-text-field
-                                    id="profileIdent"
-                                    v-model="editedProfile.ident"
-                                    label="IC/Passport"
-                                    :rules="profileIdentRules"
-                                    :error-messages="requiredProfErrMsg.ident"
-                                    @change="requiredProfErrMsg.ident=''"
-                                  />
-                                </v-col>
-
-                                <v-col
-                                  cols="12"
-                                  md="4"
-                                >
-                                  <v-menu
-                                    id="profileDob"
-                                    ref="dobMenu"
-                                    v-model="dobMenu"
-                                    :close-on-content-click="false"
-                                    :return-value.sync="editedProfile.dob"
-                                    transition="scale-transition"
-                                    offset-y
-                                    min-width="auto"
-                                  >
-                                    <template #activator="{ on, attrs }">
-                                      <v-text-field
-                                        v-model="editedProfile.dob"
-                                        label="Date Of Birth"
-                                        prepend-icon="mdi-calendar"
-                                        readonly
-                                        v-bind="attrs"
-                                        :error-messages="requiredProfErrMsg.dob"
-                                        v-on="on"
-                                      />
-                                    </template>
-                                    <v-date-picker
-                                      v-model="editedProfile.dob"
-                                      no-title
-                                      scrollable
-                                      @change="requiredProfErrMsg.dob=''"
+                                  <v-container fluid>
+                                    <v-data-table
+                                      v-if="searchEPRes.length"
+                                      dense
+                                      style="cursor:pointer"
+                                      :headers="epHeaders"
+                                      :items="searchEPRes"
+                                      item-key="ident"
+                                      :page.sync="epPage"
+                                      :items-per-page="epItemsPerPage"
+                                      multi-sort
+                                      hide-default-footer
+                                      class="elevation-3 white"
                                     >
-                                      <v-spacer />
-                                      <v-btn
-                                        text
-                                        color="primary"
-                                        @click="dobMenu = false"
-                                      >
-                                        Cancel
-                                      </v-btn>
-                                      <v-btn
-                                        text
-                                        color="primary"
-                                        @click="$refs.dobMenu.save(editedProfile.dob)"
-                                      >
-                                        OK
-                                      </v-btn>
-                                    </v-date-picker>
-                                  </v-menu>
-                                </v-col>
-
-                                <v-col
-                                  cols="12"
-                                  md="4"
-                                >
-                                  <v-select
-                                    id="profileGender"
-                                    v-model="editedProfile.gender"
-                                    :items="gender"
-                                    label="Gender"
-                                    :error-messages="requiredProfErrMsg.gender"
-                                    @change="requiredProfErrMsg.gender=''"
-                                  />
-                                </v-col>
-
-                                <v-col
-                                  cols="12"
-                                  md="4"
-                                >
-                                  <v-select
-                                    id="profileRace"
-                                    v-model="editedProfile.race"
-                                    :items="race"
-                                    label="Race"
-                                    :error-messages="requiredProfErrMsg.race"
-                                    @change="requiredProfErrMsg.race=''"
-                                  />
-                                </v-col>
-
-                                <v-col
-                                  cols="12"
-                                >
-                                  <div v-show="false" />
-                                </v-col>
-
-                                <v-col
-                                  cols="12"
-                                  md="4"
-                                >
-                                  <v-select
-                                    id="profileNationality"
-                                    v-model="editedProfile.nationality"
-                                    :items="nationality"
-                                    label="Nationality"
-                                    :error-messages="requiredProfErrMsg.nationality"
-                                    @change="requiredProfErrMsg.nationality=''"
-                                  />
-                                </v-col>
-
-                                <v-col
-                                  cols="12"
-                                  md="4"
-                                >
-                                  <v-select
-                                    id="profileEduLvl"
-                                    v-model="editedProfile.eduLvl"
-                                    :items="eduLvl"
-                                    label="Education Level"
-                                  />
-                                </v-col>
-
-                                <v-col
-                                  cols="12"
-                                  md="4"
-                                >
-                                  <v-text-field
-                                    id="profileOccupation"
-                                    v-model="editedProfile.occupation"
-                                    label="Occupation"
-                                    :rules="profileOccupationRules"
-                                    :error-messages="requiredProfErrMsg.occupation"
-                                    @change="requiredProfErrMsg.occupation=''"
-                                  />
-                                </v-col>
-
-                                <v-col
-                                  cols="12"
-                                  md="4"
-                                >
-                                  <v-file-input
-                                    v-model="profilePic"
-                                    style="cursor:pointer"
-                                    show-size
-                                    accept="image/png, image/jpeg, image/bmp"
-                                    prepend-icon="mdi-camera"
-                                    label="Profile Picture"
-                                    @change="processProfilePic"
-                                  />
-                                </v-col>
-
-                                <v-col
-                                  cols="12"
-                                  md="4"
-                                >
-                                  <v-text-field
-                                    id="profileTel"
-                                    v-model="editedProfile.tel"
-                                    label="Telephone"
-                                    :rules="profileTelRules"
-                                    :error-messages="requiredProfErrMsg.tel"
-                                    @change="requiredProfErrMsg.tel=''"
-                                  />
-                                </v-col>
-
-                                <v-col
-                                  cols="12"
-                                  md="4"
-                                >
-                                  <div v-show="false" />
-                                </v-col>
-
-                                <v-col
-                                  cols="12"
-                                >
-                                  <div v-show="false" />
-                                </v-col>
-
-                                <v-col
-                                  cols="12"
-                                  md="8"
-                                >
-                                  <v-text-field
-                                    id="profileAddress"
-                                    v-model="editedProfile.address"
-                                    label="Address"
-                                    :error-messages="requiredProfErrMsg.address"
-                                    @change="requiredProfErrMsg.address=''"
-                                  />
-                                </v-col>
-
-                                <v-col
-                                  cols="12"
-                                  md="4"
-                                >
-                                  <v-text-field
-                                    id="profilePostalCode"
-                                    v-model="editedProfile.postalCode"
-                                    label="Postal Code"
-                                    :error-messages="requiredProfErrMsg.postalCode"
-                                    @change="requiredProfErrMsg.postalCode=''"
-                                  />
-                                </v-col>
-
-                                <v-col
-                                  cols="12"
-                                  md="4"
-                                >
-                                  <v-text-field
-                                    id="profileLocality"
-                                    v-model="editedProfile.locality"
-                                    label="Locality/Taman"
-                                    :error-messages="requiredProfErrMsg.locality"
-                                    @change="requiredProfErrMsg.locality=''"
-                                  />
-                                </v-col>
-
-                                <v-col
-                                  cols="12"
-                                  md="4"
-                                >
-                                  <v-text-field
-                                    id="profileDistrict"
-                                    v-model="editedProfile.district"
-                                    label="District"
-                                    :error-messages="requiredProfErrMsg.district"
-                                    @change="requiredProfErrMsg.district=''"
-                                  />
-                                </v-col>
-
-                                <v-col
-                                  cols="12"
-                                  md="4"
-                                >
-                                  <v-select
-                                    id="profileState"
-                                    v-model="editedProfile.state"
-                                    :items="state"
-                                    label="State"
-                                    :error-messages="requiredProfErrMsg.state"
-                                    @change="requiredProfErrMsg.state=''"
-                                  />
-                                </v-col>
-
-                                <v-col
-                                  cols="12"
-                                >
-                                  <div v-show="false" />
-                                </v-col>
-
-                                <v-col
-                                  cols="12"
-                                  md="4"
-                                >
-                                  <v-select
-                                    id="profileSupportVac"
-                                    v-model="editedProfile.supportVac"
-                                    :items="supportVac"
-                                    item-text="name"
-                                    item-value="value"
-                                    label="Support Vaccine"
-                                    :rules="supportVacRule"
-                                    :error-messages="requiredProfErrMsg.supportVac"
-                                    @change="requiredProfErrMsg.supportVac=''"
-                                  />
-                                </v-col>
-
-                                <v-col
-                                  cols="12"
-                                  md="8"
-                                >
-                                  <div v-show="false" />
+                                      <!-- TABLE HEADER CONFIGURATION -->
+                                      <template #[`header.name`]="{ header }">
+                                        <span class="mb-n6 white--text font-weight-black">{{ header.text }}</span>
+                                      </template>
+                                      <template #[`header.ident`]="{ header }">
+                                        <span class="white--text font-weight-medium">{{ header.text }}</span>
+                                      </template>
+                                    </v-data-table>
+                                  </v-container>
                                 </v-col>
                               </v-row>
-                            </v-form>
-                          </v-container>
-                        </v-card-text>
 
-                        <v-card-actions>
-                          <v-spacer />
-                          <v-btn
-                            color="blue darken-1"
-                            text
-                            @click="closeCCEditDialog"
-                            @keydown.esc="closeCCEditDialog"
-                          >
-                            Cancel
-                          </v-btn>
-                          <v-btn
-                            color="blue darken-1"
-                            text
-                            @click="saveCC"
-                          >
-                            Save
-                          </v-btn>
-                          <v-btn
-                            color="yellow darken-3"
-                            text
-                            :disabled="editedIndex===-1"
-                            @click="deleteItem"
-                          >
-                            Delete
-                          </v-btn>
-                        </v-card-actions>
-                      </v-card>
-                    </v-dialog>
+                              <!-- FORM: CREATE NEW CONTACT -->
+                              <v-form @submit.prevent="submit">
+                                <v-row>
+                                  <v-col
+                                    cols="12"
+                                    md="6"
+                                    sm="12"
+                                    class="text-center mx-auto"
+                                  >
+                                    <v-text-field
+                                      id="profileName"
+                                      v-model="editedProfile.name"
+                                      label="Name"
+                                      :rules="profileNameRules"
+                                      :error-messages="requiredProfErrMsg.name"
+                                      @change="requiredProfErrMsg.name=''"
+                                    />
+                                  </v-col>
 
-                    <!-- DELETE DIALOG -->
-                    <v-dialog v-model="removeDialog" max-width="500px">
-                      <v-card>
-                        <v-card-title class="headline">
-                          Are you sure you want to remove this person from close contact list?
-                        </v-card-title>
-                        <v-card-actions>
-                          <v-spacer />
-                          <v-btn color="blue darken-1" text @click="closeDelete">
-                            Cancel
-                          </v-btn>
-                          <v-btn color="blue darken-1" text @click="deleteItemConfirm">
-                            OK
-                          </v-btn>
-                          <v-spacer />
-                        </v-card-actions>
-                      </v-card>
-                    </v-dialog>
+                                  <v-col
+                                    cols="12"
+                                    md="6"
+                                    sm="12"
+                                    class="text-center mx-auto"
+                                  >
+                                    <v-text-field
+                                      id="profileIdent"
+                                      v-model="editedProfile.ident"
+                                      label="IC/Passport"
+                                      :rules="profileIdentRules"
+                                      :error-messages="requiredProfErrMsg.ident"
+                                      @change="requiredProfErrMsg.ident=''"
+                                    />
+                                  </v-col>
 
-                    <!-- EXPORT -->
-                    <v-btn
-                      small
-                      color="primary"
-                      dark
-                      @click="exportXlsx"
-                    >
-                      <v-icon>
-                        mdi-plus
-                      </v-icon>
-                      Export
-                    </v-btn>
-                  </v-toolbar>
-                </template>
-              </v-data-table>
+                                  <v-col
+                                    cols="12"
+                                    md="4"
+                                    sm="12"
+                                    class="text-center mx-auto"
+                                  >
+                                    <v-menu
+                                      id="profileDob"
+                                      ref="dobMenu"
+                                      v-model="dobMenu"
+                                      :close-on-content-click="false"
+                                      :return-value.sync="editedProfile.dob"
+                                      transition="scale-transition"
+                                      offset-y
+                                      min-width="auto"
+                                    >
+                                      <template #activator="{ on, attrs }">
+                                        <v-text-field
+                                          v-model="editedProfile.dob"
+                                          label="Date Of Birth"
+                                          prepend-icon="mdi-calendar"
+                                          readonly
+                                          v-bind="attrs"
+                                          :error-messages="requiredProfErrMsg.dob"
+                                          v-on="on"
+                                        />
+                                      </template>
+                                      <v-date-picker
+                                        v-model="editedProfile.dob"
+                                        no-title
+                                        scrollable
+                                        @change="requiredProfErrMsg.dob=''"
+                                      >
+                                        <v-spacer />
+                                        <v-btn
+                                          text
+                                          color="primary"
+                                          @click="dobMenu = false"
+                                        >
+                                          Cancel
+                                        </v-btn>
+                                        <v-btn
+                                          text
+                                          color="primary"
+                                          @click="$refs.dobMenu.save(editedProfile.dob)"
+                                        >
+                                          OK
+                                        </v-btn>
+                                      </v-date-picker>
+                                    </v-menu>
+                                  </v-col>
+
+                                  <v-col
+                                    cols="12"
+                                    md="4"
+                                    sm="12"
+                                    class="text-center mx-auto"
+                                  >
+                                    <v-select
+                                      id="profileGender"
+                                      v-model="editedProfile.gender"
+                                      :items="gender"
+                                      label="Gender"
+                                      :error-messages="requiredProfErrMsg.gender"
+                                      @change="requiredProfErrMsg.gender=''"
+                                    />
+                                  </v-col>
+
+                                  <v-col
+                                    cols="12"
+                                    md="4"
+                                    sm="12"
+                                    class="text-center mx-auto"
+                                  >
+                                    <v-select
+                                      id="profileRace"
+                                      v-model="editedProfile.race"
+                                      :items="race"
+                                      label="Race"
+                                      :error-messages="requiredProfErrMsg.race"
+                                      @change="requiredProfErrMsg.race=''"
+                                    />
+                                  </v-col>
+
+                                  <v-col
+                                    cols="12"
+                                  >
+                                    <div v-show="false" />
+                                  </v-col>
+
+                                  <v-col
+                                    cols="12"
+                                    md="4"
+                                    sm="12"
+                                    class="text-center mx-auto"
+                                  >
+                                    <v-select
+                                      id="profileNationality"
+                                      v-model="editedProfile.nationality"
+                                      :items="nationality"
+                                      label="Nationality"
+                                      :error-messages="requiredProfErrMsg.nationality"
+                                      @change="requiredProfErrMsg.nationality=''"
+                                    />
+                                  </v-col>
+
+                                  <v-col
+                                    cols="12"
+                                    md="4"
+                                    sm="12"
+                                    class="text-center mx-auto"
+                                  >
+                                    <v-text-field
+                                      id="profileOccupation"
+                                      v-model="editedProfile.occupation"
+                                      label="Occupation"
+                                      :rules="profileOccupationRules"
+                                      :error-messages="requiredProfErrMsg.occupation"
+                                      @change="requiredProfErrMsg.occupation=''"
+                                    />
+                                  </v-col>
+
+                                  <v-col
+                                    cols="12"
+                                    md="4"
+                                    sm="12"
+                                    class="text-center mx-auto"
+                                  >
+                                    <v-select
+                                      id="profileEduLvl"
+                                      v-model="editedProfile.eduLvl"
+                                      :items="eduLvl"
+                                      label="Education Level"
+                                    />
+                                  </v-col>
+
+                                  <v-col
+                                    cols="12"
+                                    md="4"
+                                    sm="12"
+                                    class="text-center mx-auto"
+                                  >
+                                    <!-- <v-file-input
+                                      v-model="profilePic"
+                                      style="cursor:pointer"
+                                      show-size
+                                      accept="image/png, image/jpeg, image/bmp"
+                                      prepend-icon="mdi-camera"
+                                      label="Profile Picture"
+                                      @change="processProfilePic"
+                                    /> -->
+                                    <div v-show="false" />
+                                  </v-col>
+
+                                  <v-col
+                                    cols="12"
+                                    md="4"
+                                    sm="12"
+                                    class="text-center mx-auto"
+                                  >
+                                    <v-text-field
+                                      id="profileTel"
+                                      v-model="editedProfile.tel"
+                                      label="Telephone"
+                                      :rules="profileTelRules"
+                                      :error-messages="requiredProfErrMsg.tel"
+                                      @change="requiredProfErrMsg.tel=''"
+                                    />
+                                  </v-col>
+
+                                  <v-col
+                                    cols="12"
+                                    md="4"
+                                    sm="12"
+                                    class="text-center mx-auto"
+                                  >
+                                    <div v-show="false" />
+                                  </v-col>
+
+                                  <v-col
+                                    cols="12"
+                                  >
+                                    <div v-show="false" />
+                                  </v-col>
+
+                                  <v-col
+                                    cols="12"
+                                    md="8"
+                                    sm="12"
+                                    class="text-center mx-auto"
+                                  >
+                                    <v-text-field
+                                      id="profileAddress"
+                                      v-model="editedProfile.address"
+                                      label="Address"
+                                      :error-messages="requiredProfErrMsg.address"
+                                      @change="requiredProfErrMsg.address=''"
+                                    />
+                                  </v-col>
+
+                                  <v-col
+                                    cols="12"
+                                    md="4"
+                                    sm="12"
+                                    class="text-center mx-auto"
+                                  >
+                                    <v-text-field
+                                      id="profilePostalCode"
+                                      v-model="editedProfile.postalCode"
+                                      label="Postal Code"
+                                      :error-messages="requiredProfErrMsg.postalCode"
+                                      @change="requiredProfErrMsg.postalCode=''"
+                                    />
+                                  </v-col>
+
+                                  <v-col
+                                    cols="12"
+                                    md="4"
+                                    sm="12"
+                                    class="text-center mx-auto"
+                                  >
+                                    <v-text-field
+                                      id="profileLocality"
+                                      v-model="editedProfile.locality"
+                                      label="Locality/Taman"
+                                      :error-messages="requiredProfErrMsg.locality"
+                                      @change="requiredProfErrMsg.locality=''"
+                                    />
+                                  </v-col>
+
+                                  <v-col
+                                    cols="12"
+                                    md="4"
+                                    sm="12"
+                                    class="text-center mx-auto"
+                                  >
+                                    <v-text-field
+                                      id="profileDistrict"
+                                      v-model="editedProfile.district"
+                                      label="District"
+                                      :error-messages="requiredProfErrMsg.district"
+                                      @change="requiredProfErrMsg.district=''"
+                                    />
+                                  </v-col>
+
+                                  <v-col
+                                    cols="12"
+                                    md="4"
+                                    sm="12"
+                                    class="text-center mx-auto"
+                                  >
+                                    <v-select
+                                      id="profileState"
+                                      v-model="editedProfile.state"
+                                      :items="state"
+                                      label="State"
+                                      :error-messages="requiredProfErrMsg.state"
+                                      @change="requiredProfErrMsg.state=''"
+                                    />
+                                  </v-col>
+
+                                  <v-col
+                                    cols="12"
+                                  >
+                                    <div v-show="false" />
+                                  </v-col>
+                                </v-row>
+                              </v-form>
+                            </v-container>
+                          </v-card-text>
+
+                          <v-card-actions>
+                            <v-spacer />
+                            <v-btn
+                              color="blue darken-1"
+                              text
+                              @click="closeCCEditDialog"
+                              @keydown.esc="closeCCEditDialog"
+                            >
+                              Cancel
+                            </v-btn>
+                            <v-btn
+                              color="blue darken-1"
+                              text
+                              @click="saveCC"
+                            >
+                              Save
+                            </v-btn>
+                            <v-btn
+                              color="yellow darken-3"
+                              text
+                              :disabled="editedIndex===-1"
+                              @click="deleteItem"
+                            >
+                              Delete
+                            </v-btn>
+                          </v-card-actions>
+                        </v-card>
+                      </v-dialog>
+
+                      <!-- DELETE DIALOG -->
+                      <v-dialog v-model="removeDialog" max-width="500px">
+                        <v-card>
+                          <v-card-title class="headline">
+                            Are you sure you want to remove this person from close contact list?
+                          </v-card-title>
+                          <v-card-actions>
+                            <v-spacer />
+                            <v-btn color="blue darken-1" text @click="closeDelete">
+                              Cancel
+                            </v-btn>
+                            <v-btn color="blue darken-1" text @click="deleteItemConfirm">
+                              OK
+                            </v-btn>
+                            <v-spacer />
+                          </v-card-actions>
+                        </v-card>
+                      </v-dialog>
+
+                      <!-- EXPORT -->
+                      <v-btn
+                        small
+                        color="primary"
+                        dark
+                        @click="exportXlsx"
+                      >
+                        <v-icon>
+                          mdi-plus
+                        </v-icon>
+                        Export
+                      </v-btn>
+                    </v-toolbar>
+                  </template>
+                </v-data-table>
+              </v-container>
             </v-col>
 
             <v-col cols="12" class="mx-auto">
@@ -894,9 +936,8 @@ export default {
         { name: 'patient4', ident: '67890' }
       ],
       ccEditedIndex: -1,
-      editDialog: false,
+      ccEditDialog: false,
       removeDialog: false,
-      dobMenu: false,
       profilePic: null,
       editedProfile: {
         role: '',
@@ -950,6 +991,53 @@ export default {
         state: '',
         supportVac: ''
       },
+
+      // New Close Contact(People) Form
+      dobMenu: false,
+      gender: ['Male', 'Female'],
+      race: [
+        'Malay',
+        'Chinese',
+        'Indian',
+        'Others'
+      ],
+      nationality: ['Warganegara', 'Bukan Warganegara'],
+      eduLvl: ['Primary', 'Secondary', 'Tertiary'],
+      state: [
+        'Perlis',
+        'Kedah',
+        'Pulau Pinang',
+        'Perak',
+        'Selangor',
+        'Kuala Lumpur',
+        'Negeri Sembilan',
+        'Melaka',
+        'Johor',
+        'Kelantan',
+        'Terengganu',
+        'Pahang',
+        'Sabah',
+        'Sarawak',
+        'Pulau Labuan'
+      ],
+      /* FORM FIELD RULES */
+      requiredRule: [v => !!v || 'This field is required'],
+      profileNameRules: [
+        v => !(v.search(/[0-9!#$%^&*)(<>+=,.?_-]/g) > -1) || 'Name must contain alphabet characters only'
+      ],
+      profileIdentRules: [
+        v => !(v.search(/[!@#$%^&* )(<>+=,.?_-]/g) > -1) || 'IC/Passport is not allowed to contain space and special characters'
+      ],
+      profileOccupationRules: [
+        v => !(v.search(/[0-9!@#$%^&*)(<>+=,.?_-]/g) > -1) || 'Occupation must contain alphabet characters only'
+      ],
+      profileTelRules: [
+        v => !((v.match(/-/g) || []).length > 1) || 'Telephone number can contain only 1 hyphen character',
+        v => !(v.search(/[!@#$%^&* )(<>+=,.?_]/g) > -1) || 'Telephone number not allowed to contain space and special characters',
+        v => !(v.search(/[a-zA-Z]/g) > -1) || 'Telephone number not allowed to contain alphabet characters'
+      ],
+
+      // Search Existing People(EP)
       searchEP: '',
       searchingEP: false,
       epPage: 1,
@@ -959,6 +1047,7 @@ export default {
         { text: 'Name', value: 'name', align: 'start', sortable: true, class: 'success', width: '160px' },
         { text: 'IC/Passport', value: 'ident', sortable: true, class: 'success', width: '100px' }
       ],
+
       // HSO
       hsoDialog: false,
       hsoDuration: '',
