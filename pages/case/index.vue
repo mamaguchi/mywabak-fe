@@ -435,8 +435,10 @@
                                     flat
                                     class="rounded-pill"
                                     placeholder="Masukkan IC/Passport"
+                                    :hint="searchEPHint"
                                     @keydown.enter="doSearchEP"
                                     @keydown.esc="searchEP=''"
+                                    @input="searchEPHint=''"
                                   >
                                     <template #append>
                                       <v-icon
@@ -485,7 +487,7 @@
                               </v-row>
 
                               <!-- CLOSE CONTACTS SEARCH RESULT -->
-                              <v-row>
+                              <v-row v-if="searchEPRes.length">
                                 <v-col
                                   cols="12"
                                   md="12"
@@ -494,7 +496,6 @@
                                 >
                                   <v-container fluid>
                                     <v-data-table
-                                      v-if="searchEPRes.length"
                                       dense
                                       style="cursor:pointer"
                                       :headers="epHeaders"
@@ -1039,6 +1040,7 @@ export default {
 
       // Search Existing People(EP)
       searchEP: '',
+      searchEPHint: '',
       searchingEP: false,
       epPage: 1,
       epItemsPerPage: 5,
@@ -1125,8 +1127,46 @@ export default {
       }
     },
 
-    doSearchEP () {
-      //
+    async doSearchEP () {
+      if (this.searchEP === '') {
+        return
+      }
+      this.searchEPRes.length = 0
+      const payload = {
+        ident: this.searchEP
+      }
+
+      try {
+        let response
+        if (process.env.NODE_ENV === 'production') {
+          response = await this.$axios.post(
+            'https://mywabak.com/people/get',
+            payload
+          )
+        } else {
+          response = await this.$axios.post(
+            'http://localhost:8080/people/get',
+            payload
+          )
+        }
+        if (response.data.ident === 'NOTFOUND') {
+          this.searchEPHint = 'ID ini tidak dijumpai dalam sistem'
+          return
+        }
+        const ep = {
+          name: response.data.name,
+          ident: response.data.ident
+        }
+        this.searchEPRes.push(ep)
+      } catch (error) {
+        if (error.response) {
+          alert('Masalah network, sila cuba sebentar lagi')
+        } else if (error.request) {
+          //
+        } else {
+          //
+        }
+      }
     },
 
     createHSO () {
