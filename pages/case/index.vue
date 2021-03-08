@@ -549,7 +549,7 @@
                               <v-row justify="left" class="mt-12 mb-n4">
                                 <div
                                   style="cursor: pointer"
-                                  @click="regNewCC = true"
+                                  @click="regNewCC = !regNewCC"
                                 >
                                   <v-icon
                                     small
@@ -913,14 +913,12 @@ export default {
         { name: 'patient2', ident: '456' }
       ],
 
-      // TAB: CLOSE CONTACTS
+      // TAB: CLOSE CONTACTS (CC)
       ccHeaders: [
         { text: 'Name', value: 'name', align: 'start', sortable: true, class: 'success', width: '160px' },
         { text: 'IC/Passport', value: 'ident', sortable: true, class: 'success', width: '100px' }
       ],
-      cc: [
-
-      ],
+      // cc: [],
       ccEditedIndex: -1,
       ccEditDialog: false,
       removeDialog: false,
@@ -1057,6 +1055,27 @@ export default {
 
     dobVal () {
       return this.editedProfile.dob
+    },
+
+    wbkcase () {
+      return this.$store.getters['wbkcase/wbkcase']
+    },    
+
+    cc: {
+      get () {
+        return this.$store.getters['wbkcase/cc']
+      },
+      set (val) {
+        this.$store.commit('wbkcase/cc', val)
+      }
+    }
+  },
+
+  watch: {
+    tab (val) {
+      if (val === 2) {
+        this.$store.dispatch('wbkcase/getCC')
+      }
     }
   },
 
@@ -1080,7 +1099,7 @@ export default {
       }
       const newCCArray = [...this.cc]
       newCCArray.push(newCC)
-      this.cc.length = 0
+      // this.cc.length = 0
       this.cc = newCCArray
       cc.isAdded = true
     },
@@ -1089,12 +1108,12 @@ export default {
       try {
         if (process.env.NODE_ENV === 'production') {
           await this.$axios.post(
-            'https://mywabak.com/people/add',
+            'https://mywabak.com/people/upsert',
             this.editedProfile
           )
         } else {
           await this.$axios.post(
-            'http://localhost:8080/people/add',
+            'http://localhost:8080/people/upsert',
             this.editedProfile
           )
         }
