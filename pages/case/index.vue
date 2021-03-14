@@ -123,7 +123,7 @@
             <!-- LIST OF CLOSE CONTACTS -->
             <v-col
               cols="12"
-              md="12"
+              md="10"
               sm="12"
               class="mx-auto"
             >
@@ -740,7 +740,7 @@
 
                                     <v-col
                                       cols="12"
-                                      md="10"
+                                      md="12"
                                       sm="11"
                                       class="text-center mx-auto"
                                     >
@@ -1059,7 +1059,7 @@ export default {
 
     wbkcase () {
       return this.$store.getters['wbkcase/wbkcase']
-    },    
+    },
 
     cc: {
       get () {
