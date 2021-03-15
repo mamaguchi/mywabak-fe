@@ -80,7 +80,7 @@
           <v-card
             v-show="newHseAddressCard"
             text
-            class="my-2"
+            class="my-2 mx-1"
             max-width="600px"
           >
             <v-card-text>
@@ -96,7 +96,7 @@
                   >
                     <v-text-field
                       id="profileAddress"
-                      v-model="editedProfile.address"
+                      v-model="address"
                       label="Alamat tempat tinggal"
                       :error-messages="requiredProfErrMsg.address"
                       autofocus
@@ -149,7 +149,7 @@
                     <v-select
                       id="profileState"
                       v-model="editedProfile.state"
-                      :items="state"
+                      :items="states"
                       label="State"
                       :error-messages="requiredProfErrMsg.state"
                       @change="requiredProfErrMsg.state=''"
@@ -164,7 +164,7 @@
                     class="text-center mx-auto"
                   >
                     <v-btn
-                      :disabled="!editedProfile.address"
+                      :disabled="!address"
                       @click="addAddress"
                     >
                       Tambah
@@ -284,7 +284,7 @@
 
                   class="mt-1 text-caption font-weight-medium"
                 >
-                  {{ hse.address }}
+                  {{ hse }}
                 </span>
               </v-row>
             </v-btn>
@@ -358,7 +358,6 @@
     <v-sheet
       color="blue-grey lighten-5"
       class="px-4 py-8 mx-n3"
-      min-height="300px"
     >
       <v-row dense>
         <!-- V-ICON: TO DISPLAY NEW CC FORM -->
@@ -446,13 +445,14 @@
           cols="12"
           md="10"
           sm="10"
-          class="mx-auto mt-2 text-left"
+          xs="10"
+          class="mx-auto mt-2"
         >
           <v-card
             v-show="newPeopleInHseCard && selectedHse!==undefined"
             ref="form"
             color="white"
-            class="my-2"
+            class="my-2 mx-1"
           >
             <v-card-text>
               <v-form @submit.prevent="submit">
@@ -489,6 +489,25 @@
                       label="IC/Passport"
                       validate-on-blur
                       :rules="identRules"
+                      required
+                    />
+                  </v-col>
+
+                  <!-- GENDER -->
+                  <v-col
+                    cols="12"
+                    md="4"
+                    sm="11"
+                    class="text-center mx-auto"
+                  >
+                    <v-select
+                      id="gender"
+                      ref="gender"
+                      v-model="editedProfile.gender"
+                      :items="gender"
+                      label="Gender"
+                      validate-on-blur
+                      :rules="requiredRule"
                       required
                     />
                   </v-col>
@@ -536,7 +555,7 @@
                     </v-menu>
                   </v-col>
 
-                  <!-- GENDER -->
+                  <!-- NATIONALITY -->
                   <v-col
                     cols="12"
                     md="4"
@@ -544,11 +563,11 @@
                     class="text-center mx-auto"
                   >
                     <v-select
-                      id="gender"
-                      ref="gender"
-                      v-model="editedProfile.gender"
-                      :items="gender"
-                      label="Gender"
+                      id="nationality"
+                      ref="nationality"
+                      v-model="editedProfile.nationality"
+                      :items="nationality"
+                      label="Nationality"
                       validate-on-blur
                       :rules="requiredRule"
                       required
@@ -574,21 +593,20 @@
                     />
                   </v-col>
 
-                  <!-- NATIONALITY -->
+                  <!-- TELEPHONE -->
                   <v-col
                     cols="12"
                     md="4"
                     sm="11"
                     class="text-center mx-auto"
                   >
-                    <v-select
-                      id="nationality"
-                      ref="nationality"
-                      v-model="editedProfile.nationality"
-                      :items="nationality"
-                      label="Nationality"
+                    <v-text-field
+                      id="tel"
+                      ref="tel"
+                      v-model="editedProfile.tel"
+                      label="Telephone"
                       validate-on-blur
-                      :rules="requiredRule"
+                      :rules="profileTelRules"
                       required
                     />
                   </v-col>
@@ -607,24 +625,6 @@
                       label="Occupation"
                       validate-on-blur
                       :rules="requiredRule"
-                      required
-                    />
-                  </v-col>
-
-                  <!-- TELEPHONE -->
-                  <v-col
-                    cols="12"
-                    md="4"
-                    sm="11"
-                    class="text-center mx-auto"
-                  >
-                    <v-text-field
-                      id="tel"
-                      ref="tel"
-                      v-model="editedProfile.tel"
-                      label="Telephone"
-                      validate-on-blur
-                      :rules="profileTelRules"
                       required
                     />
                   </v-col>
@@ -650,6 +650,55 @@
         </v-col>
       </v-row>
     </v-sheet>
+
+    <v-sheet
+      color="white"
+      class="px-4 pb-16 mx-n3"
+    >
+      <v-row dense>
+        <!-- TITLE: LANGKAH KE-4 -->
+        <v-col
+          cols="12"
+          md="10"
+          sm="10"
+          xs="12"
+          class="mx-auto mt-10 text-left"
+        >
+          <span
+            class="text-subtitle-2 font-weight-medium"
+          >
+            4.
+          </span>
+          <span
+            class="ml-2 text-subtitle-1 font-weight-light"
+          >
+            Siap dan hantar
+          </span>
+        </v-col>
+
+        <!-- V-BTN: SUBMIT REGISTRATION -->
+        <v-col
+          cols="12"
+          md="10"
+          sm="10"
+          xs="12"
+          class="mx-auto mt-10"
+        >
+          <v-row justify="center">
+            <v-btn
+              color="blue-grey lighten-2"
+              @click="submitRegistration"
+            >
+              <span
+                class="blue-grey--text text--lighten-5 font-weight-bold"
+              >
+                Submit
+              </span>
+            </v-btn>
+          </v-row>
+        </v-col>
+      </v-row>
+    </v-sheet>
   </div>
 </template>
 
@@ -660,57 +709,51 @@ export default {
 
   data () {
     return {
+      // Wbkcase Metadata
+      locality: '',
+      district: 'Maran',
+      state: 'Pahang',
+      casename: 'bandarjengka-2021-02-01-hospjengka',
+      assignedToIk: '880601101111',
+      hasBeenVerified: true,
+      verifiedBy: '880601101111',
+
+      // Input Form
       newHseAddressCard: false,
       newPeopleInHseCard: false,
       selectedHse: undefined,
+      address: '',
       hseAddresses: [],
-      // peopleInHse: [],
       peopleInHse: {},
       peoples: [],
       editedProfile: {
-        ident: '',
         name: '',
+        ident: '',
         gender: '',
         dob: '',
         nationality: '',
         race: '',
         tel: '',
-        address: '',
-        state: '',
-        district: '',
-        locality: '',
         occupation: '',
         comorbid: []
       },
       defaultProfile: {
-        ident: '',
         name: '',
+        ident: '',
         gender: '',
         dob: '',
         nationality: '',
         race: '',
         tel: '',
-        address: '',
-        state: '',
-        district: '',
-        locality: '',
         occupation: '',
         comorbid: []
       },
       requiredProfErrMsg: {
-        name: '',
-        gender: '',
         dob: '',
-        race: '',
-        ident: '',
-        nationality: '',
-        occupation: '',
-        tel: '',
         address: '',
         locality: '',
         district: '',
-        state: '',
-        supportVac: ''
+        state: ''
       },
 
       // New Close Contact(People) Form
@@ -724,7 +767,7 @@ export default {
       ],
       nationality: ['Warganegara', 'Bukan Warganegara'],
       eduLvl: ['Primary', 'Secondary', 'Tertiary'],
-      state: [
+      states: [
         'Perlis',
         'Kedah',
         'Pulau Pinang',
@@ -741,6 +784,7 @@ export default {
         'Sarawak',
         'Pulau Labuan'
       ],
+
       /* FORM FIELD RULES */
       requiredRule: [v => !!v || 'This field is required'],
       profileNameRules: [
@@ -816,13 +860,9 @@ export default {
     },
 
     addAddress () {
-      const newHse = {
-        address: this.editedProfile.address,
-        isSelected: false
-      }
-      this.hseAddresses.push(newHse)
+      this.hseAddresses.push(this.address)
       this.newHseAddressCard = false
-      this.editedProfile.address = ''
+      this.address = ''
     },
 
     removePeopleVchip (idx) {
@@ -885,19 +925,100 @@ export default {
 
         if (Array.isArray(this.peopleInHse[this.selectedHse])) {
           this.peopleInHse[this.selectedHse].push(newPeople)
-          // if (this.checkIfIdentConflict(newPeople.ident)) {
-          //   this.peopleInHse[this.selectedHse].push(newPeople)
-          // } else {
-          //   alert('ID ini sudah ditambah tadi, anda tidak boleh tambah ID yang sama lebih sekali')
-          //   return
-          // }
         } else {
           this.peopleInHse[this.selectedHse] = [newPeople]
         }
         this.editedProfile = Object.assign({}, this.defaultProfile)
-        this.$refs.dob.reset()
+        this.$refs.dob.reset() // manually clearing dob field validation error msg
         this.newPeopleInHseCard = false
         this.reloadPeople()
+      }
+    },
+
+    hseAddressNotEmpty () {
+      return this.hseAddresses.length > 0
+    },
+
+    peopleInHseNotEmpty () {
+      const keys = Object.keys(this.peopleInHse)
+      if (keys.length === 0) { return false }
+
+      for (let i = 0; i < keys.length; i++) {
+        const key = keys[i]
+        if (Array.isArray(this.peopleInHse[key])) {
+          if (this.peopleInHse[key].length > 0) {
+            return true
+          }
+        }
+      }
+      return false
+    },
+
+    prepareCCDataForPayload () {
+      const ccRegs = []
+
+      for (let i = 0; i < this.hseAddresses.length; i++) {
+        if (Array.isArray(this.peopleInHse[i])) {
+          if (this.peopleInHse[i].length > 0) {
+            const ccReg = {
+              address: this.hseAddresses[i],
+              locality: this.locality,
+              district: this.district,
+              state: this.state,
+              closeContacts: [...this.peopleInHse[i]]
+            }
+            ccRegs.push(ccReg)
+          }
+        }
+      }
+      return ccRegs
+    },
+
+    async submitRegistration () {
+      if (!this.hseAddressNotEmpty()) {
+        alert('Sila masukkan alamat tempat tinggal')
+        return
+      }
+      if (!this.peopleInHseNotEmpty()) {
+        alert('Sila tambahkan penghuni rumah')
+      }
+
+      const payload = {
+        wbkcase: {
+          casename: this.casename,
+          assignedToIk: this.assignedToIk,
+          hasBeenVerified: this.hasBeenVerified,
+          verifiedBy: this.verifiedBy
+        }
+      }
+      payload.closeContactRegs = this.prepareCCDataForPayload()
+      // eslint-disable-next-line
+      // console.log(payload)
+
+      try {
+        let response
+        if (process.env.NODE_ENV === 'production') {
+          response = await this.$axios.post(
+            'https://mywabak.com/wbkcase/people/reg',
+            payload
+          )
+        } else {
+          response = await this.$axios.post(
+            'http://localhost:8080/wbkcase/people/reg',
+            payload
+          )
+        }
+        if (response.data.ccRegStatus === '1') {
+          alert('Pendaftaran berjaya')
+        }
+      } catch (error) {
+        if (error.response) {
+          alert('Masalah network, sila cuba sebentar lagi')
+        } else if (error.request) {
+          //
+        } else {
+          //
+        }
       }
     }
 
