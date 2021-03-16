@@ -16,7 +16,7 @@
           <span
             class="text-h3 font-weight-regular grey--text text--darken-3"
           >
-            Pendaftaran Kontak Rapat
+            Pendaftaran Kontak Rapat {{ mode }}
           </span>
         </v-col>
 
@@ -345,6 +345,7 @@
             color="blue-grey darken-2"
             class="ma-1"
             close
+            @click="showCCDetail"
             @click:close="removePeopleVchip(i)"
           >
             <span
@@ -710,17 +711,25 @@
 import { compareAsc } from 'date-fns'
 
 export default {
+  name: 'CloseContactRegForm',
+
+  props: {
+    mode: {
+      type: String,
+      default: '1'
+    }
+  },
 
   data () {
     return {
       // Wbkcase Metadata
-      mode: '1',
+      // mode: '',
       locality: '',
       district: 'Maran',
       state: 'Pahang',
       casename: 'bandarjengka-2021-02-01-hospjengka',
       assignedToIk: '880601101111',
-      hasBeenVerified: true,
+      hasBeenVerified: false,
       verifiedBy: '880601101111',
 
       // Input Form
@@ -850,6 +859,58 @@ export default {
 
   },
 
+  async created () {
+    if (this.mode === '2') {
+      const payload = {
+        casename: this.casename,
+        assignedToIk: this.assignedToIk
+      }
+
+      try {
+        let response
+        if (process.env.NODE_ENV === 'production') {
+          response = await this.$axios.post(
+            'https://mywabak.com/cc/new/get',
+            payload
+          )
+        } else {
+          response = await this.$axios.post(
+            'http://localhost:8080/cc/new/get',
+            payload
+          )
+        }
+        if (response.data.closeContacts.length === 0) {
+          alert('Tiada kontak rapat untuk kes ini')
+          return
+        }
+
+        const addresses = []
+        const ccInHse = {}
+        for (let i = 0; i < response.data.closeContacts.length; i++) {
+          const cc = response.data.closeContacts[i]
+          let addIdx = addresses.indexOf(cc.address)
+          if (addIdx === -1) {
+            addresses.push(cc.address)
+            addIdx = addresses.indexOf(cc.address)
+            ccInHse[addIdx] = [cc]
+          } else {
+            ccInHse[addIdx].push(cc)
+          }
+        }
+        this.hseAddresses = [...addresses]
+        this.peopleInHse = Object.assign({}, ccInHse)
+      } catch (error) {
+        if (error.response) {
+          alert('Masalah network, sila cuba sebentar lagi')
+        } else if (error.request) {
+          //
+        } else {
+          //
+        }
+      }
+    }
+  },
+
   methods: {
     checkNotAfterToday (date) {
       if (compareAsc(new Date(), new Date(date)) < 0) {
@@ -868,6 +929,14 @@ export default {
       this.hseAddresses.push(this.address)
       this.newHseAddressCard = false
       this.address = ''
+    },
+
+    showCCDetail () {
+      if (this.mode === '1') {
+        return
+      }
+
+      alert('Hello cc detail')
     },
 
     removePeopleVchip (idx) {
