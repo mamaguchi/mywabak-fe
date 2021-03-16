@@ -341,11 +341,11 @@
           <v-chip
             v-for="(people, i) in peoples"
             :key="people.ident"
-            outlined
-            color="blue-grey darken-2"
+            :outlined="editedIdx!==i"
+            :color="editedIdx===i? 'teal accent-4' : 'blue-grey darken-2'"
             class="ma-1"
             close
-            @click="showCCDetail"
+            @click="showCCDetail(i, people)"
             @click:close="removePeopleVchip(i)"
           >
             <span
@@ -371,6 +371,7 @@
           sm="5"
           class="ml-auto mt-6 text-left"
         >
+          <!-- DISABLED MODE -->
           <div
             v-if="selectedHse===undefined"
             style="cursor:default"
@@ -401,8 +402,10 @@
               mdi-human-male
             </v-icon>
           </div>
+
+          <!-- ADD MODE -->
           <div
-            v-else
+            v-else-if="selectedHse!==undefined && editedIdx===undefined"
             style="cursor: pointer"
             @click="newPeopleInHseCard = !newPeopleInHseCard"
           >
@@ -423,6 +426,29 @@
               class="ml-n3 mb-n2 text-subtitle-1 font-weight-light teal--text"
             >
               Tambah Penghuni Rumah
+            </span>
+            <v-icon
+              right
+              color="blue-grey darken-2"
+              class="mt-n2"
+            >
+              mdi-human-male
+            </v-icon>
+          </div>
+
+          <!-- EDIT MODE -->
+          <div
+            v-else-if="selectedHse!==undefined && editedIdx!==undefined"
+          >
+            <span
+              class="text-subtitle-2 font-weight-medium"
+            >
+              3.
+            </span>
+            <span
+              class="ml-2 mb-n2 text-subtitle-1 font-weight-light"
+            >
+              Edit Penghuni Rumah
             </span>
             <v-icon
               right
@@ -633,6 +659,27 @@
                     />
                   </v-col>
 
+                  <!-- COMORBID -->
+                  <v-col
+                    cols="12"
+                    md="4"
+                    sm="11"
+                    class="text-center mx-auto"
+                  >
+                    <v-select
+                      id="comorbid"
+                      ref="comorbid"
+                      v-model="editedProfile.comorbid"
+                      :items="comorbids"
+                      item-text="name"
+                      item-value="value"
+                      label="Masalah Kesihatan"
+                      validate-on-blur
+                      :rules="requiredRule"
+                      required
+                    />
+                  </v-col>
+
                   <!-- V-BTN: ADD PEOPLE -->
                   <v-col
                     cols="12"
@@ -641,10 +688,18 @@
                     class="text-center mx-auto"
                   >
                     <v-btn
+                      v-if="editedIdx===undefined"
                       :disabled="!editedProfile.ident"
                       @click="addPeople"
                     >
                       Tambah
+                    </v-btn>
+                    <v-btn
+                      v-else
+                      :disabled="!editedProfile.ident"
+                      @click="saveEdit"
+                    >
+                      Edit
                     </v-btn>
                   </v-col>
                 </v-row>
@@ -729,8 +784,8 @@ export default {
       state: 'Pahang',
       casename: 'bandarjengka-2021-02-01-hospjengka',
       assignedToIk: '880601101111',
-      hasBeenVerified: false,
-      verifiedBy: '880601101111',
+      // hasBeenVerified: false,
+      // verifiedBy: '',
 
       // Input Form
       newHseAddressCard: false,
@@ -740,6 +795,7 @@ export default {
       hseAddresses: [],
       peopleInHse: {},
       peoples: [],
+      editedIdx: undefined,
       editedProfile: {
         name: '',
         ident: '',
@@ -797,6 +853,15 @@ export default {
         'Sabah',
         'Sarawak',
         'Pulau Labuan'
+      ],
+      comorbids: [
+        { name: 'Darah Tinggi', value: 'hpt' },
+        { name: 'Kencing Manis', value: 'dm' },
+        { name: 'Masalah Jantung', value: 'cvd' },
+        { name: 'Asma', value: 'asthma' },
+        { name: 'COPD', value: 'copd' },
+        { name: 'Penyakit Buah Pinggang', value: 'ckd' },
+        { name: 'Kanser', value: 'cancer' }
       ],
 
       /* FORM FIELD RULES */
@@ -879,8 +944,9 @@ export default {
             payload
           )
         }
-        if (response.data.closeContacts.length === 0) {
-          alert('Tiada kontak rapat untuk kes ini')
+        if (!response.data.closeContacts ||
+          response.data.closeContacts.length === 0) {
+          alert('Tiada pendaftaran kontak rapat baru untuk kes ini')
           return
         }
 
@@ -931,18 +997,37 @@ export default {
       this.address = ''
     },
 
-    showCCDetail () {
+    showCCDetail (idx, people) {
       if (this.mode === '1') {
         return
       }
+      if (this.editedIdx === undefined) {
+        // Start Edit Mode
+        this.editedIdx = idx
+        this.editedProfile = Object.assign({}, people)
+        this.newPeopleInHseCard = true
+      } else {
+        // End Edit Mode
+        this.saveEdit()
+      }
+    },
 
-      alert('Hello cc detail')
+    saveEdit () {
+      if (this.validateCCForm()) {
+        this.peopleInHse[this.selectedHse][this.editedIdx] = Object.assign({}, this.editedProfile)
+        this.reloadPeople()
+        this.newPeopleInHseCard = false
+      }
     },
 
     removePeopleVchip (idx) {
       this.peopleInHse[this.selectedHse].splice(idx, 1)
-
       this.$nextTick(this.reloadPeople())
+    },
+
+    clearEditedProfileAndIdx () {
+      this.editedIdx = undefined
+      this.editedProfile = Object.assign({}, this.defaultProfile)
     },
 
     reloadPeople () {
@@ -951,6 +1036,8 @@ export default {
         this.peoples = []
       }
 
+      this.clearEditedProfileAndIdx()
+
       if (Array.isArray(this.peopleInHse[this.selectedHse])) {
         this.peoples = [...this.peopleInHse[this.selectedHse]]
       } else {
@@ -958,7 +1045,7 @@ export default {
       }
     },
 
-    validateSignInForm () {
+    validateCCForm () {
       let isValid = true
       const formKeys = Object.keys(this.form)
       for (let i = 0; i < formKeys.length; i++) {
@@ -989,7 +1076,7 @@ export default {
     },
 
     addPeople () {
-      if (this.validateSignInForm()) {
+      if (this.validateCCForm()) {
         const newPeople = Object.assign({}, this.editedProfile)
 
         if (!this.checkIfIdentConflict(newPeople.ident)) {
@@ -1049,6 +1136,10 @@ export default {
     },
 
     async submitRegistration () {
+      if (this.editedIdx !== undefined) {
+        alert('Sila habiskan edit penghuni rumah dulu')
+        return
+      }
       if (!this.hseAddressNotEmpty()) {
         alert('Sila tambah tempat tinggal')
         return
@@ -1062,8 +1153,8 @@ export default {
           mode: this.mode,
           casename: this.casename,
           assignedToIk: this.assignedToIk,
-          hasBeenVerified: this.hasBeenVerified,
-          verifiedBy: this.verifiedBy
+          hasBeenVerified: this.mode !== '1',
+          verifiedBy: this.mode === '1' ? '' : this.assignedToIk
         }
       }
       payload.closeContactRegs = this.prepareCCDataForPayload()
