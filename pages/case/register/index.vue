@@ -16,7 +16,7 @@
           <span
             class="text-h3 font-weight-regular grey--text text--darken-3"
           >
-            Pendaftaran Kontak Rapat {{ mode }}
+            Pengurusan Kes COVID
           </span>
         </v-col>
 
@@ -30,7 +30,7 @@
         >
           <div
             style="cursor: pointer"
-            @click="newHseAddressCard = !newHseAddressCard"
+            @click="newCaseRegForm = !newCaseRegForm"
           >
             <span
               class="text-subtitle-2 font-weight-medium"
@@ -48,14 +48,14 @@
             <span
               class="ml-n3 mb-n2 text-subtitle-1 font-weight-light teal--text text--accent-4"
             >
-              Tambah Tempat Tinggal
+              Tambah Kes Baru 
             </span>
             <v-icon
               right
               color="blue-grey darken-2"
               class="mt-n1"
             >
-              mdi-home
+              mdi-folder-plus
             </v-icon>
           </div>
         </v-col>
@@ -79,16 +79,15 @@
           class="mx-auto mt-2 text-left"
         >
           <v-card
-            v-show="newHseAddressCard"
+            v-show="newCaseRegForm"
             text
             class="my-2 mx-1"
             max-width="600px"
           >
             <v-card-text>
               <v-form @submit.prevent="submit">
-                <!-- LOCATION -->
                 <v-row>
-                  <!-- ADDRESS -->
+                  <!-- CASENAME -->
                   <v-col
                     cols="12"
                     md="12"
@@ -96,17 +95,15 @@
                     class="text-center mx-auto"
                   >
                     <v-text-field
-                      id="profileAddress"
-                      v-model="address"
-                      label="Alamat tempat tinggal"
-                      :error-messages="requiredProfErrMsg.address"
+                      id="casename"
+                      v-model="editedCase.casename"
+                      label="Nama kes baru"
                       autofocus
-                      @change="requiredProfErrMsg.address=''"
                     />
                   </v-col>
 
                   <!-- LOCALITY -->
-                  <v-col
+                  <!-- <v-col
                     v-if="mode!=='1'"
                     cols="12"
                     md="4"
@@ -120,7 +117,7 @@
                       :error-messages="requiredProfErrMsg.locality"
                       @change="requiredProfErrMsg.locality=''"
                     />
-                  </v-col>
+                  </v-col> -->
 
                   <!-- DISTRICT -->
                   <v-col
@@ -131,11 +128,9 @@
                     class="text-center mx-auto"
                   >
                     <v-text-field
-                      id="profileDistrict"
-                      v-model="editedProfile.district"
-                      label="District"
-                      :error-messages="requiredProfErrMsg.district"
-                      @change="requiredProfErrMsg.district=''"
+                      id="district"
+                      v-model="editedCase.district"
+                      label="Daerah"
                     />
                   </v-col>
 
@@ -148,12 +143,10 @@
                     class="text-center mx-auto"
                   >
                     <v-select
-                      id="profileState"
-                      v-model="editedProfile.state"
+                      id="state"
+                      v-model="editedCase.state"
                       :items="states"
-                      label="State"
-                      :error-messages="requiredProfErrMsg.state"
-                      @change="requiredProfErrMsg.state=''"
+                      label="Negeri"
                     />
                   </v-col>
 
@@ -165,8 +158,8 @@
                     class="text-center mx-auto"
                   >
                     <v-btn
-                      :disabled="!address"
-                      @click="addAddress"
+                      :disabled="!editedCase.casename"
+                      @click="addCase"
                     >
                       Tambah
                     </v-btn>
@@ -201,11 +194,11 @@
           <span
             class="ml-2 text-subtitle-1 font-weight-light"
           >
-            Pilih Alamat
+            Pilih Kes
           </span>
         </v-col>
 
-        <!-- TITLE: ALAMAT -->
+        <!-- TITLE: KES -->
         <v-col
           cols="12"
           md="5"
@@ -224,13 +217,13 @@
               <span
                 class="teal--text text--accent-4"
               >
-                Alamat
+                Kes
               </span>
             </v-btn>
           </v-row>
         </v-col>
 
-        <!-- TITLE: ISI RUMAH (xs hidden, sm onwards visible)-->
+        <!-- TITLE: PEGAWAI BERTUGAS (xs hidden, sm onwards visible)-->
         <v-col
           cols="12"
           md="5"
@@ -249,7 +242,7 @@
               <span
                 class="teal--text text--accent-4"
               >
-                Isi Rumah
+                Pegawait Bertugas
               </span>
             </v-btn>
           </v-row>
@@ -982,18 +975,28 @@ export default {
 
   data () {
     return {
-      // Wbkcase Metadata
-      // mode: '',
-      locality: '',
-      district: 'Maran',
-      state: 'Pahang',
-      casename: 'bandarjengka-2021-02-01-hospjengka',
+      // Wbkcase Form   
+      newCaseRegForm: false,
+      cases: [],   
+      editedCase: {
+        casename: '',
+        district: '',
+        state: '',
+      },
+      defaultCase: {
+        casename: '',
+        district: '',
+        state: '',
+      },
+      // locality: '',
+      // district: 'Maran',
+      // state: 'Pahang',
+      // casename: 'bandarjengka-2021-02-01-hospjengka',
       assignedToIk: '880601101111',
       // hasBeenVerified: false,
       // verifiedBy: '',
 
-      // Input Form
-      newHseAddressCard: false,
+      // Input Form      
       newPeopleInHseCard: false,
       selectedHse: undefined,
       address: '',
@@ -1298,6 +1301,12 @@ export default {
   },
 
   methods: {
+    addCase () {
+      //
+    },
+
+    // ============================
+
     checkNotAfterToday (date) {
       if (compareAsc(new Date(), new Date(date)) < 0) {
         return false
@@ -1323,7 +1332,7 @@ export default {
 
     addAddress () {
       this.hseAddresses.push(this.address)
-      this.newHseAddressCard = false
+      this.newCaseRegForm = false
       this.address = ''
     },
 
