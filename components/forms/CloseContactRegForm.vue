@@ -673,7 +673,212 @@
                       :items="comorbids"
                       item-text="name"
                       item-value="value"
-                      label="Masalah Kesihatan"
+                      multiple
+                      :label="masalahKesihatanLabel"
+                      validate-on-blur
+                      :rules="comorbidRequiredRule"
+                      required
+                      @change="clearNoMasalahKesihatan"
+                    >
+                      <template #prepend-item>
+                        <v-list-item
+                          ripple
+                          @click="toggleNoMasalahKesihatan"
+                        >
+                          <v-list-item-action>
+                            <v-icon
+                              v-if="!toTickNoMasalahKesihatanIcon"
+                            >
+                              mdi-checkbox-blank-outline
+                            </v-icon>
+                            <v-icon
+                              v-else-if="toTickNoMasalahKesihatanIcon"
+                              color="teal accent-4"
+                            >
+                              mdi-close-box
+                            </v-icon>
+                          </v-list-item-action>
+                          <v-list-item-content>
+                            <v-list-item-title>
+                              Tiada masalah kesihatan
+                            </v-list-item-title>
+                          </v-list-item-content>
+                        </v-list-item>
+                        <v-divider class="mt-2" />
+                      </template>
+                    </v-select>
+                  </v-col>
+
+                  <!-- CONTACTTO -->
+                  <v-col
+                    v-if="mode!=='1'"
+                    cols="12"
+                    md="6"
+                    sm="11"
+                    class="text-center mx-auto"
+                  >
+                    <v-text-field
+                      id="contactto"
+                      ref="contactto"
+                      v-model="editedProfile.contactto"
+                      label="Kontak Kepada Siapa"
+                      validate-on-blur
+                      :rules="identRules"
+                      required
+                    />
+                  </v-col>
+
+                  <!-- LASTCONTACT -->
+                  <v-col
+                    v-if="mode!=='1'"
+                    cols="12"
+                    md="4"
+                    sm="11"
+                    class="text-center mx-auto"
+                  >
+                    <v-menu
+                      v-model="lastcontactMenu"
+                      :close-on-content-click="false"
+                      :nudge-right="40"
+                      lazy
+                      transition="scale-transition"
+                      offset-y
+                      full-width
+                      max-width="290px"
+                      min-width="290px"
+                    >
+                      <template #activator="{ on }">
+                        <v-text-field
+                          id="lastcontact"
+                          ref="lastcontact"
+                          :value="lastcontactVal"
+                          label="Tarikh Last Kontak"
+                          prepend-icon="mdi-calendar"
+                          readonly
+                          :rules="requiredRule"
+                          :error-messages="requiredProfErrMsg.lastcontact"
+                          v-on="on"
+                        />
+                      </template>
+                      <v-date-picker
+                        v-model="editedProfile.lastcontact"
+                        :allowed-dates="checkNotAfterToday"
+                        locale="en-in"
+                        no-title
+                        scrollable
+                        @input="refreshLastcontact"
+                      />
+                    </v-menu>
+                  </v-col>
+
+                  <!-- SYMPTOMS -->
+                  <v-col
+                    v-if="mode!=='1'"
+                    cols="12"
+                    md="4"
+                    sm="11"
+                    class="text-center mx-auto"
+                  >
+                    <v-select
+                      id="symptoms"
+                      ref="symptoms"
+                      v-model="editedProfile.symptoms"
+                      :items="symptoms"
+                      item-text="name"
+                      item-value="value"
+                      multiple
+                      :label="symptomsLabel"
+                      validate-on-blur
+                      :rules="symptomsRequiredRule"
+                      required
+                      @change="clearNoSymptoms"
+                    >
+                      <template #prepend-item>
+                        <v-list-item
+                          ripple
+                          @click="toggleNoSymptoms"
+                        >
+                          <v-list-item-action>
+                            <v-icon
+                              v-if="!toTickNoSymptomsIcon"
+                            >
+                              mdi-checkbox-blank-outline
+                            </v-icon>
+                            <v-icon
+                              v-else-if="toTickNoSymptomsIcon"
+                              color="teal accent-4"
+                            >
+                              mdi-close-box
+                            </v-icon>
+                          </v-list-item-action>
+                          <v-list-item-content>
+                            <v-list-item-title>
+                              Tiada simtom
+                            </v-list-item-title>
+                          </v-list-item-content>
+                        </v-list-item>
+                        <v-divider class="mt-2" />
+                      </template>
+                    </v-select>
+                  </v-col>
+
+                  <!-- ONSET -->
+                  <v-col
+                    v-if="mode!=='1'"
+                    cols="12"
+                    md="4"
+                    sm="11"
+                    class="text-center mx-auto"
+                  >
+                    <v-menu
+                      v-model="onsetMenu"
+                      :close-on-content-click="false"
+                      :nudge-right="40"
+                      lazy
+                      transition="scale-transition"
+                      offset-y
+                      full-width
+                      max-width="290px"
+                      min-width="290px"
+                    >
+                      <template #activator="{ on }">
+                        <v-text-field
+                          id="onset"
+                          ref="onset"
+                          :disabled="editedProfile.symptoms[0]==='nosx'"
+                          :value="onsetVal"
+                          label="Tarikh Onset Simtom"
+                          prepend-icon="mdi-calendar"
+                          readonly
+                          :rules="requiredRule"
+                          :error-messages="requiredProfErrMsg.onset"
+                          v-on="on"
+                        />
+                      </template>
+                      <v-date-picker
+                        v-model="editedProfile.onset"
+                        :allowed-dates="checkNotAfterToday"
+                        locale="en-in"
+                        no-title
+                        scrollable
+                        @input="refreshOnset"
+                      />
+                    </v-menu>
+                  </v-col>
+
+                  <!-- WORKLOC -->
+                  <v-col
+                    v-if="mode!=='1'"
+                    cols="12"
+                    md="6"
+                    sm="11"
+                    class="text-center mx-auto"
+                  >
+                    <v-text-field
+                      id="workloc"
+                      ref="workloc"
+                      v-model="editedProfile.workloc"
+                      label="Lokasi Tempat Kerja"
                       validate-on-blur
                       :rules="requiredRule"
                       required
@@ -797,6 +1002,7 @@ export default {
       peoples: [],
       editedIdx: undefined,
       editedProfile: {
+        hasbeenreviewed: '',
         name: '',
         ident: '',
         gender: '',
@@ -805,9 +1011,16 @@ export default {
         race: '',
         tel: '',
         occupation: '',
-        comorbid: []
+        comorbid: [],
+        //
+        contactto: '',
+        lastcontact: '',
+        symptoms: [],
+        onset: '',
+        workloc: ''
       },
       defaultProfile: {
+        hasbeenreviewed: '',
         name: '',
         ident: '',
         gender: '',
@@ -816,18 +1029,37 @@ export default {
         race: '',
         tel: '',
         occupation: '',
-        comorbid: []
+        comorbid: [],
+        //
+        contactto: '',
+        lastcontact: '',
+        symptoms: [],
+        onset: '',
+        workloc: ''
       },
       requiredProfErrMsg: {
         dob: '',
         address: '',
         locality: '',
         district: '',
-        state: ''
+        state: '',
+        lastcontact: '',
+        onset: ''
+      },
+      defaultProfErrMsg: {
+        dob: '',
+        address: '',
+        locality: '',
+        district: '',
+        state: '',
+        lastcontact: '',
+        onset: ''
       },
 
       // New Close Contact(People) Form
       dobMenu: false,
+      lastcontactMenu: false,
+      onsetMenu: false,
       gender: ['Male', 'Female'],
       race: [
         'Malay',
@@ -863,9 +1095,22 @@ export default {
         { name: 'Penyakit Buah Pinggang', value: 'ckd' },
         { name: 'Kanser', value: 'cancer' }
       ],
+      symptoms: [
+        { name: 'Deman', value: 'fever' },
+        { name: 'Batuk', value: 'cough' },
+        { name: 'Selsema', value: 'runnynose' },
+        { name: 'Sakit Tekak', value: 'sorethroat' },
+        { name: 'Muntah', value: 'vomiting' },
+        { name: 'Cirit-birit', value: 'diarhoea' },
+        { name: 'Hilang Deria Baru', value: 'anosmia' },
+        { name: 'Hilang Deria Rasa', value: 'ageusia' },
+        { name: 'Kurang Selera Makan', value: 'loa' }
+      ],
 
       /* FORM FIELD RULES */
       requiredRule: [v => !!v || 'This field is required'],
+      comorbidRequiredRule: [v => !(v.length === 0) || 'Comorbid field is required'],
+      symptomsRequiredRule: [v => !(v.length === 0) || 'Symptoms field is required'],
       profileNameRules: [
         v => !(v.search(/[0-9!#$%^&*)(<>+=,.?_-]/g) > -1) || 'Name must contain alphabet characters only'
       ],
@@ -909,7 +1154,15 @@ export default {
       return this.editedProfile.dob
     },
 
-    form () {
+    lastcontactVal () {
+      return this.editedProfile.lastcontact
+    },
+
+    onsetVal () {
+      return this.editedProfile.onset
+    },
+
+    formMode1 () {
       return {
         name: this.editedProfile.name,
         ident: this.editedProfile.ident,
@@ -918,7 +1171,54 @@ export default {
         race: this.editedProfile.race,
         nationality: this.editedProfile.nationality,
         occupation: this.editedProfile.occupation,
-        tel: this.editedProfile.tel
+        tel: this.editedProfile.tel,
+        comorbid: this.editedProfile.comorbid
+      }
+    },
+
+    formMode2 () {
+      return {
+        contactto: this.editedProfile.contactto,
+        lastcontact: this.editedProfile.lastcontact,
+        symptoms: this.editedProfile.symptoms,
+        onset: this.editedProfile.onset,
+        workloc: this.editedProfile.workloc
+      }
+    },
+
+    toTickNoMasalahKesihatanIcon () {
+      if (this.editedProfile.comorbid.includes('nkmi')) {
+        // return 'mdi-close-box'
+        return true
+      } else {
+        // return 'mdi-checkbox-blank-outline'
+        return false
+      }
+    },
+
+    toTickNoSymptomsIcon () {
+      if (this.editedProfile.symptoms.includes('nosx')) {
+        // return 'mdi-close-box'
+        return true
+      } else {
+        // return 'mdi-checkbox-blank-outline'
+        return false
+      }
+    },
+
+    masalahKesihatanLabel () {
+      if (this.editedProfile.comorbid.includes('nkmi')) {
+        return 'Tiada Masalah Kesihatan'
+      } else {
+        return 'Masalah Kesihatan'
+      }
+    },
+
+    symptomsLabel () {
+      if (this.editedProfile.symptoms.includes('nosx')) {
+        return 'Tiada simtom'
+      } else {
+        return 'Simtom'
       }
     }
 
@@ -954,6 +1254,12 @@ export default {
         const ccInHse = {}
         for (let i = 0; i < response.data.closeContacts.length; i++) {
           const cc = response.data.closeContacts[i]
+          if (!cc.contactto) { cc.contactto = '' }
+          if (!cc.lastcontact) { cc.lastcontact = '' }
+          if (!cc.symptoms) { cc.symptoms = [] }
+          if (!cc.onset) { cc.onset = '' }
+          if (!cc.workloc) { cc.workloc = '' }
+
           let addIdx = addresses.indexOf(cc.address)
           if (addIdx === -1) {
             addresses.push(cc.address)
@@ -991,10 +1297,53 @@ export default {
       this.dobMenu = false
     },
 
+    refreshLastcontact () {
+      this.requiredProfErrMsg.lastcontact = ''
+      this.lastcontactMenu = false
+    },
+
+    refreshOnset () {
+      this.requiredProfErrMsg.onset = ''
+      this.onsetMenu = false
+    },
+
     addAddress () {
       this.hseAddresses.push(this.address)
       this.newHseAddressCard = false
       this.address = ''
+    },
+
+    toggleNoMasalahKesihatan () {
+      if (this.editedProfile.comorbid.includes('nkmi')) {
+        this.editedProfile.comorbid = []
+      } else {
+        this.editedProfile.comorbid.length = 0
+        this.editedProfile.comorbid = ['nkmi']
+      }
+    },
+
+    clearNoMasalahKesihatan () {
+      const idx = this.editedProfile.comorbid.indexOf('nkmi')
+      if (idx === -1) { return }
+      // Remove 'nkmi' from 'this.editedProfile.comorbid
+      this.editedProfile.comorbid.splice(idx, 1)
+    },
+
+    toggleNoSymptoms () {
+      if (this.editedProfile.symptoms.includes('nosx')) {
+        this.editedProfile.symptoms = []
+      } else {
+        this.editedProfile.symptoms.length = 0
+        this.editedProfile.symptoms = ['nosx']
+        this.editedProfile.onset = ''
+      }
+    },
+
+    clearNoSymptoms () {
+      const idx = this.editedProfile.symptoms.indexOf('nosx')
+      if (idx === -1) { return }
+      // Remove 'nosx' from 'this.editedProfile.symptoms
+      this.editedProfile.symptoms.splice(idx, 1)
     },
 
     showCCDetail (idx, people) {
@@ -1014,7 +1363,9 @@ export default {
 
     saveEdit () {
       if (this.validateCCForm()) {
+        this.editedProfile.hasbeenreviewed = true
         this.peopleInHse[this.selectedHse][this.editedIdx] = Object.assign({}, this.editedProfile)
+        // reloadPeople() will reset editedProfile, editedIdx, requiredProfErrMsg.
         this.reloadPeople()
         this.newPeopleInHseCard = false
       }
@@ -1028,6 +1379,18 @@ export default {
     clearEditedProfileAndIdx () {
       this.editedIdx = undefined
       this.editedProfile = Object.assign({}, this.defaultProfile)
+      this.requiredProfErrMsg = Object.assign({}, this.defaultProfErrMsg)
+
+      let form = {}
+      if (this.mode === '1') {
+        form = this.formMode1
+      } else {
+        form = { ...this.formMode1, ...this.formMode2 }
+      }
+      const formKeys = Object.keys(form)
+      for (let i = 0; i < formKeys.length; i++) {
+        this.$refs[formKeys[i]].reset()
+      }
     },
 
     reloadPeople () {
@@ -1047,8 +1410,20 @@ export default {
 
     validateCCForm () {
       let isValid = true
-      const formKeys = Object.keys(this.form)
+
+      let form = {}
+      if (this.mode === '1') {
+        form = this.formMode1
+      } else {
+        form = { ...this.formMode1, ...this.formMode2 }
+      }
+
+      const formKeys = Object.keys(form)
       for (let i = 0; i < formKeys.length; i++) {
+        if (formKeys[i] === 'onset' &&
+            this.editedProfile.symptoms[0] === 'nosx') {
+          continue
+        }
         if (!this.$refs[formKeys[i]].validate(true)) {
           isValid = false
           document.querySelector(`#${formKeys[i]}`).scrollIntoView({ behavior: 'smooth', block: 'center' })
@@ -1077,6 +1452,7 @@ export default {
 
     addPeople () {
       if (this.validateCCForm()) {
+        this.editedProfile.hasbeenreviewed = true
         const newPeople = Object.assign({}, this.editedProfile)
 
         if (!this.checkIfIdentConflict(newPeople.ident)) {
@@ -1090,7 +1466,7 @@ export default {
           this.peopleInHse[this.selectedHse] = [newPeople]
         }
         this.editedProfile = Object.assign({}, this.defaultProfile)
-        this.$refs.dob.reset() // manually clearing dob field validation error msg
+        this.$refs.dob.reset() // manually clearing dob field validation error
         this.newPeopleInHseCard = false
         this.reloadPeople()
       }
@@ -1135,6 +1511,26 @@ export default {
       return ccRegs
     },
 
+    checkAllNewCCHasBeenReviewed () {
+      for (let i = 0; i < this.hseAddresses.length; i++) {
+        if (Array.isArray(this.peopleInHse[i])) {
+          if (this.peopleInHse[i].length > 0) {
+            for (let j = 0; j < this.peopleInHse[i].length; j++) {
+              // eslint-disble-next-line
+              if (this.peopleInHse[i][j].hasbeenreviewed === false) {
+                return {
+                  res: false,
+                  address: this.hseAddresses[i],
+                  name: this.peopleInHse[i][j].name
+                }
+              }
+            }
+          }
+        }
+      }
+      return { res: true }
+    },
+
     async submitRegistration () {
       if (this.editedIdx !== undefined) {
         alert('Sila habiskan edit penghuni rumah dulu')
@@ -1146,6 +1542,12 @@ export default {
       }
       if (!this.peopleInHseNotEmpty()) {
         alert('Sila tambah penghuni rumah')
+      }
+      const reviewCheck = this.checkAllNewCCHasBeenReviewed()
+      if (!reviewCheck.res) {
+        alert(reviewCheck.name + ' dari ' +
+            reviewCheck.address + ' masih belum diperiksa')
+        return
       }
 
       const payload = {
