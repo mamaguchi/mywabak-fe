@@ -1366,8 +1366,9 @@ export default {
         this.editedProfile.hasbeenreviewed = true
         this.peopleInHse[this.selectedHse][this.editedIdx] = Object.assign({}, this.editedProfile)
         // reloadPeople() will reset editedProfile, editedIdx, requiredProfErrMsg.
+        // reloadPeople() then copy the updated this.peopleInHse back to this.peoples.
         this.reloadPeople()
-        this.newPeopleInHseCard = false
+        // this.newPeopleInHseCard = false
       }
     },
 
@@ -1394,12 +1395,14 @@ export default {
     },
 
     reloadPeople () {
+      this.clearEditedProfileAndIdx()
+      this.newPeopleInHseCard = false
+
       if (this.selectedHse === undefined) {
         this.peoples.length = 0
         this.peoples = []
+        return
       }
-
-      this.clearEditedProfileAndIdx()
 
       if (Array.isArray(this.peopleInHse[this.selectedHse])) {
         this.peoples = [...this.peopleInHse[this.selectedHse]]
