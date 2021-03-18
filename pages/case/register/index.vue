@@ -16,11 +16,11 @@
           <span
             class="text-h3 font-weight-regular grey--text text--darken-3"
           >
-            Pengurusan Kes COVID
+            Pengurusan Kes COVID  {{ tab }}
           </span>
         </v-col>
 
-        <!-- V-ICON: TO DISPLAY NEW HSE ADDRESS FORM -->
+        <!-- V-ICON: TO DISPLAY NEW CASE FORM -->
         <v-col
           cols="12"
           md="3"
@@ -28,10 +28,7 @@
           xs="5"
           class="ml-auto mt-16 text-left"
         >
-          <div
-            style="cursor: pointer"
-            @click="newCaseRegForm = !newCaseRegForm"
-          >
+          <div>
             <span
               class="text-subtitle-2 font-weight-medium"
             >
@@ -40,22 +37,22 @@
             <v-icon
               small
               left
-              color="teal"
+
               class="ml-2 mt-n1"
             >
               mdi-plus
             </v-icon>
             <span
-              class="ml-n3 mb-n2 text-subtitle-1 font-weight-light teal--text text--accent-4"
+              class="ml-n3 mb-n2 text-subtitle-1 font-weight-light"
             >
-              Tambah Kes Baru 
+              Tambah Kes Baru
             </span>
             <v-icon
               right
               color="blue-grey darken-2"
               class="mt-n1"
             >
-              mdi-folder-plus
+              mdi-file-plus
             </v-icon>
           </div>
         </v-col>
@@ -71,7 +68,7 @@
           <div v-show="false" />
         </v-col>
 
-        <!-- V-CARD: TO ADD NEW HSE ADDRESS FORM -->
+        <!-- V-CARD: TO ADD NEW CASE FORM -->
         <v-col
           cols="12"
           md="10"
@@ -79,7 +76,6 @@
           class="mx-auto mt-2 text-left"
         >
           <v-card
-            v-show="newCaseRegForm"
             text
             class="my-2 mx-1"
             max-width="600px"
@@ -104,7 +100,6 @@
 
                   <!-- LOCALITY -->
                   <!-- <v-col
-                    v-if="mode!=='1'"
                     cols="12"
                     md="4"
                     sm="11"
@@ -112,7 +107,7 @@
                   >
                     <v-text-field
                       id="profileLocality"
-                      v-model="editedProfile.locality"
+                      v-model="editedCase.locality"
                       label="Locality/Taman"
                       :error-messages="requiredProfErrMsg.locality"
                       @change="requiredProfErrMsg.locality=''"
@@ -121,9 +116,8 @@
 
                   <!-- DISTRICT -->
                   <v-col
-                    v-if="mode!=='1'"
                     cols="12"
-                    md="4"
+                    md="6"
                     sm="11"
                     class="text-center mx-auto"
                   >
@@ -136,9 +130,8 @@
 
                   <!-- STATE -->
                   <v-col
-                    v-if="mode!=='1'"
                     cols="12"
-                    md="4"
+                    md="6"
                     sm="11"
                     class="text-center mx-auto"
                   >
@@ -151,19 +144,22 @@
                   </v-col>
 
                   <!-- V-BTN: ADD ADDRESS -->
-                  <v-col
+                  <!-- <v-col
                     cols="12"
                     md="12"
                     sm="11"
                     class="text-center mx-auto"
                   >
                     <v-btn
-                      :disabled="!editedCase.casename"
+                      :disabled="!editedCase.casename ||
+                        !editedCase.district ||
+                        !editedCase.state"
                       @click="addCase"
+                      @keydown.enter="addCase"
                     >
                       Tambah
                     </v-btn>
-                  </v-col>
+                  </v-col> -->
                 </v-row>
               </v-form>
             </v-card-text>
@@ -179,7 +175,7 @@
     >
       <v-row dense>
         <!-- TITLE: LANGKAH KE-2 -->
-        <v-col
+        <!-- <v-col
           cols="12"
           md="10"
           sm="10"
@@ -196,10 +192,10 @@
           >
             Pilih Kes
           </span>
-        </v-col>
+        </v-col> -->
 
         <!-- TITLE: KES -->
-        <v-col
+        <!-- <v-col
           cols="12"
           md="5"
           sm="6"
@@ -221,10 +217,10 @@
               </span>
             </v-btn>
           </v-row>
-        </v-col>
+        </v-col> -->
 
         <!-- TITLE: PEGAWAI BERTUGAS (xs hidden, sm onwards visible)-->
-        <v-col
+        <!-- <v-col
           cols="12"
           md="5"
           sm="4"
@@ -242,14 +238,14 @@
               <span
                 class="teal--text text--accent-4"
               >
-                Pegawait Bertugas
+                Pegawai Bertugas
               </span>
             </v-btn>
           </v-row>
-        </v-col>
+        </v-col> -->
 
-        <!-- V-BTN: HOUSE ADDRESS DISPLAY -->
-        <v-col
+        <!-- V-BTN: KES DISPLAY -->
+        <!-- <v-col
           cols="12"
           md="5"
           sm="6"
@@ -257,13 +253,13 @@
           class="ml-auto mt-8 text-left"
         >
           <v-btn-toggle
-            v-model="selectedHse"
+            v-model="selectedCase"
             color="light-blue darken-3"
             class="d-flex flex-column"
-            @change="reloadPeople"
+            @change="reloadPegawai"
           >
             <v-btn
-              v-for="(hse, j) in hseAddresses"
+              v-for="(c, j) in cases"
               :key="j"
               :value="j"
               small
@@ -271,23 +267,24 @@
             >
               <v-row justify="left">
                 <v-icon
+                  color="blue-grey darken-2"
                   class="ml-1"
                 >
-                  mdi-home-outline
+                  mdi-file-document
                 </v-icon>
                 <span
 
                   class="mt-1 text-caption font-weight-medium"
                 >
-                  {{ hse }}
+                  {{ c.casename }}
                 </span>
               </v-row>
             </v-btn>
           </v-btn-toggle>
-        </v-col>
+        </v-col> -->
 
-        <!-- TITLE: ISI RUMAH (xs only visible)-->
-        <v-col
+        <!-- TITLE: PEGAWAI BERTUGAS (xs only visible)-->
+        <!-- <v-col
           cols="12"
           md="5"
           sm="4"
@@ -305,14 +302,14 @@
               <span
                 class="teal--text text--accent-4"
               >
-                Isi Rumah
+                Pegawait Bertugas
               </span>
             </v-btn>
           </v-row>
-        </v-col>
+        </v-col> -->
 
         <!-- V-DIVIDER-VERTICAL (xs hidden, sm onwards visible)-->
-        <v-col
+        <!-- <v-col
           style="height: 200px"
           cols="12"
           md="1"
@@ -321,10 +318,10 @@
           class="d-none d-sm-flex mt-8 mb-n2"
         >
           <v-divider vertical />
-        </v-col>
+        </v-col> -->
 
-        <!-- V-CHIP: PEOPLE -->
-        <v-col
+        <!-- V-CHIP: PEGAWAI (OFFICER) -->
+        <!-- <v-col
           cols="12"
           md="4"
           sm="3"
@@ -332,21 +329,104 @@
           class="mr-auto mt-8 text-left"
         >
           <v-chip
-            v-for="(people, i) in peoples"
-            :key="people.ident"
+            v-for="(officer, i) in officers"
+            :key="officer.ident"
             :outlined="editedIdx!==i"
             :color="editedIdx===i? 'teal accent-4' : 'blue-grey darken-2'"
             class="ma-1"
             close
-            @click="showCCDetail(i, people)"
-            @click:close="removePeopleVchip(i)"
+            @click="showOfficerDetail(i, officer)"
+            @click:close="removeOfficerVchip(officer)"
           >
             <span
               class="text-caption font-weight-medium"
             >
-              {{ people.name }}
+              {{ officer.name }}
             </span>
           </v-chip>
+        </v-col> -->
+
+        <!-- TITLE: LANGKAH KE-2 -->
+        <v-col
+          cols="12"
+          md="10"
+          sm="10"
+          xs="12"
+          class="mx-auto mt-10 text-left"
+        >
+          <span
+            class="text-subtitle-2 font-weight-medium"
+          >
+            2.
+          </span>
+          <span
+            class="ml-2 text-subtitle-1 font-weight-light"
+          >
+            Pilih Pegawai Bertugas
+          </span>
+          <v-icon
+            right
+            color="blue-grey darken-2"
+          >
+            {{ pegawaiBertugasIcon }}
+          </v-icon>
+        </v-col>
+
+        <!-- TITLE: PEGAWAI BERTUGAS -->
+        <v-col
+          cols="12"
+          md="10"
+          sm="12"
+          xs="12"
+          class="mx-auto mt-8"
+        >
+          <v-row
+            justify="left"
+            class="ml-4"
+          >
+            <v-btn
+              small
+              disabled
+              style="cursor:default"
+              text
+              class="rounded-pill teal lighten-5"
+            >
+              <span
+                class="teal--text text--accent-4"
+              >
+                Pegawait Bertugas
+              </span>
+            </v-btn>
+          </v-row>
+        </v-col>
+
+        <!-- V-CHIP: PEGAWAI (OFFICER) -->
+        <v-col
+          style="height:100px"
+          cols="12"
+          md="10"
+          sm="10"
+          xs="10"
+          class="mx-auto mt-8 text-left"
+        >
+          <div class="ml-4">
+            <v-chip
+              v-for="(officer, i) in officers"
+              :key="officer.ident"
+              :outlined="editedIdx!==i"
+              :color="editedIdx===i? 'teal accent-4' : 'blue-grey darken-2'"
+              class="ma-1"
+              close
+              @click="showOfficerDetail(i, officer)"
+              @click:close="removeOfficerVchip(i)"
+            >
+              <span
+                class="text-caption font-weight-medium"
+              >
+                {{ officer.name }}
+              </span>
+            </v-chip>
+          </div>
         </v-col>
       </v-row>
     </v-sheet>
@@ -354,556 +434,134 @@
     <!-- 3RD SHEET -->
     <v-sheet
       color="blue-grey lighten-5"
-      class="px-4 py-8 mx-n3"
+      class="px-4 pt-n2 pb-8 mx-n3"
     >
       <v-row dense>
-        <!-- V-ICON: TO DISPLAY NEW CC FORM -->
-        <v-col
-          cols="12"
-          md="5"
-          sm="5"
-          class="ml-auto mt-6 text-left"
-        >
-          <!-- DISABLED MODE -->
-          <div
-            v-if="selectedHse===undefined"
-            style="cursor:default"
-          >
-            <span
-              class="text-subtitle-2 font-weight-medium"
-            >
-              3.
-            </span>
-            <v-icon
-              small
-              left
-              color="grey"
-              class="ml-2 mt-n1"
-            >
-              mdi-plus
-            </v-icon>
-            <span
-              class="ml-n3 mb-n2 text-subtitle-1 font-weight-light grey--text"
-            >
-              Tambah Penghuni Rumah
-            </span>
-            <v-icon
-              right
-              color="grey darken-2"
-              class="mt-n2"
-            >
-              mdi-human-male
-            </v-icon>
-          </div>
-
-          <!-- ADD MODE -->
-          <div
-            v-else-if="selectedHse!==undefined && editedIdx===undefined"
-            style="cursor: pointer"
-            @click="newPeopleInHseCard = !newPeopleInHseCard"
-          >
-            <span
-              class="text-subtitle-2 font-weight-medium"
-            >
-              3.
-            </span>
-            <v-icon
-              small
-              left
-              color="teal"
-              class="ml-2 mt-n1"
-            >
-              mdi-plus
-            </v-icon>
-            <span
-              class="ml-n3 mb-n2 text-subtitle-1 font-weight-light teal--text"
-            >
-              Tambah Penghuni Rumah
-            </span>
-            <v-icon
-              right
-              color="blue-grey darken-2"
-              class="mt-n2"
-            >
-              mdi-human-male
-            </v-icon>
-          </div>
-
-          <!-- EDIT MODE -->
-          <div
-            v-else-if="selectedHse!==undefined && editedIdx!==undefined"
-          >
-            <span
-              class="text-subtitle-2 font-weight-medium"
-            >
-              3.
-            </span>
-            <span
-              class="ml-2 mb-n2 text-subtitle-1 font-weight-light"
-            >
-              Edit Penghuni Rumah
-            </span>
-            <v-icon
-              right
-              color="blue-grey darken-2"
-              class="mt-n2"
-            >
-              mdi-human-male
-            </v-icon>
-          </div>
-        </v-col>
-
-        <!-- DUMMY COLUMN -->
-        <v-col
-          cols="5"
-          md="5"
-          sm="5"
-          class="mr-auto"
-        >
-          <div v-show="false" />
-        </v-col>
-
-        <!-- V-CARD: ADD NEW CC FORM -->
+        <!-- APP BAR: ASSIGN CASE TO OFFICER -->
         <v-col
           cols="12"
           md="10"
           sm="10"
-          xs="10"
-          class="mx-auto mt-2"
+          xs="12"
+          class="mx-auto text-left"
         >
-          <v-card
-            v-show="newPeopleInHseCard && selectedHse!==undefined"
-            ref="form"
-            color="white"
-            class="my-2 mx-1"
+          <v-app-bar
+            flat
+            height="10"
+            color="blue-grey lighten-5"
+            class="ml-n4"
           >
-            <v-card-text>
-              <v-form @submit.prevent="submit">
-                <v-row>
-                  <!-- NAME -->
-                  <v-col
-                    cols="12"
-                    md="6"
-                    sm="11"
-                    class="text-center mx-auto"
-                  >
-                    <v-text-field
-                      id="name"
-                      ref="name"
-                      v-model="editedProfile.name"
-                      label="Name"
-                      validate-on-blur
-                      :rules="nameRules"
-                      required
-                    />
-                  </v-col>
+            <!-- <v-toolbar-title> -->
+            <!-- TITLE -->
+            <!-- <span
+                class="text-subtitle-2 font-weight-medium"
+              >
+                3.
+              </span>
+              <span
+                class="ml-2 text-subtitle-1 font-weight-light"
+              >
+                Pilih Pegawai Bertugas
+              </span> -->
+            <!-- </v-toolbar-title> -->
 
-                  <!-- ID -->
-                  <v-col
-                    cols="12"
-                    md="6"
-                    sm="11"
-                    class="text-center mx-auto"
-                  >
-                    <v-text-field
-                      id="ident"
-                      ref="ident"
-                      v-model="editedProfile.ident"
-                      label="IC/Passport"
-                      validate-on-blur
-                      :rules="identRules"
-                      required
-                    />
-                  </v-col>
+            <!-- ICON -->
+            <!-- <v-icon
+              right
+              color="blue-grey darken-2"
+            >
+              {{ pegawaiBertugasIcon }}
+            </v-icon> -->
 
-                  <!-- GENDER -->
-                  <v-col
-                    cols="12"
-                    md="4"
-                    sm="11"
-                    class="text-center mx-auto"
-                  >
-                    <v-select
-                      id="gender"
-                      ref="gender"
-                      v-model="editedProfile.gender"
-                      :items="gender"
-                      label="Gender"
-                      validate-on-blur
-                      :rules="requiredRule"
-                      required
-                    />
-                  </v-col>
+            <!-- TABS -->
+            <template #extension>
+              <v-tabs
+                v-model="tab"
+                grow
+                color="teal accent-4"
+                class="ml-1"
+              >
+                <v-tabs-slider color="teal accent-4" />
 
-                  <!-- DOB -->
-                  <v-col
-                    cols="12"
-                    md="4"
-                    sm="11"
-                    class="text-center mx-auto"
-                  >
-                    <v-menu
-                      v-model="dobMenu"
-                      :close-on-content-click="false"
-                      :nudge-right="40"
-                      lazy
-                      transition="scale-transition"
-                      offset-y
-                      full-width
-                      max-width="290px"
-                      min-width="290px"
-                    >
-                      <template #activator="{ on }">
-                        <v-text-field
-                          id="dob"
-                          ref="dob"
-                          :value="dobVal"
-                          label="Date Of Birth"
-                          prepend-icon="mdi-calendar"
-                          readonly
+                <v-tab
+                  v-for="tabitem in tabItems"
+                  :key="tabitem"
+                >
+                  {{ tabitem }}
+                </v-tab>
+              </v-tabs>
+            </template>
+          </v-app-bar>
 
-                          :rules="requiredRule"
-                          :error-messages="requiredProfErrMsg.dob"
-                          v-on="on"
-                        />
-                      </template>
-                      <v-date-picker
-                        v-model="editedProfile.dob"
-                        :allowed-dates="checkNotAfterToday"
-                        locale="en-in"
-                        no-title
-                        scrollable
-                        @input="refreshDob"
+          <!-- TAB-ITEM -->
+          <v-tabs-items v-model="tab">
+            <v-tab-item
+              v-for="tabitem in tabItems"
+              :key="tabitem"
+            >
+              <v-card
+                v-if="tabitem === 'IK'"
+                flat
+                class="mt-2 mx-1"
+              >
+                <v-list two-line>
+                  <v-virtual-scroll
+                    :items="officersDisp"
+                    :item-height="40"
+                    height="300"
+                  >
+                    <template #default="{ item }">
+                      <!-- SUBHEADER -->
+                      <v-subheader
+                        v-if="item.header"
+                        :key="item.header"
+                        v-text="item.header"
                       />
-                    </v-menu>
-                  </v-col>
 
-                  <!-- NATIONALITY -->
-                  <v-col
-                    cols="12"
-                    md="4"
-                    sm="11"
-                    class="text-center mx-auto"
-                  >
-                    <v-select
-                      id="nationality"
-                      ref="nationality"
-                      v-model="editedProfile.nationality"
-                      :items="nationality"
-                      label="Nationality"
-                      validate-on-blur
-                      :rules="requiredRule"
-                      required
-                    />
-                  </v-col>
-
-                  <!-- RACE -->
-                  <v-col
-                    cols="12"
-                    md="4"
-                    sm="11"
-                    class="text-center mx-auto"
-                  >
-                    <v-select
-                      id="race"
-                      ref="race"
-                      v-model="editedProfile.race"
-                      :items="race"
-                      label="Race"
-                      validate-on-blur
-                      :rules="requiredRule"
-                      required
-                    />
-                  </v-col>
-
-                  <!-- TELEPHONE -->
-                  <v-col
-                    cols="12"
-                    md="4"
-                    sm="11"
-                    class="text-center mx-auto"
-                  >
-                    <v-text-field
-                      id="tel"
-                      ref="tel"
-                      v-model="editedProfile.tel"
-                      label="Telephone"
-                      validate-on-blur
-                      :rules="profileTelRules"
-                      required
-                    />
-                  </v-col>
-
-                  <!-- OCCUPATION -->
-                  <v-col
-                    cols="12"
-                    md="4"
-                    sm="11"
-                    class="text-center mx-auto"
-                  >
-                    <v-text-field
-                      id="occupation"
-                      ref="occupation"
-                      v-model="editedProfile.occupation"
-                      label="Occupation"
-                      validate-on-blur
-                      :rules="requiredRule"
-                      required
-                    />
-                  </v-col>
-
-                  <!-- COMORBID -->
-                  <v-col
-                    cols="12"
-                    md="4"
-                    sm="11"
-                    class="text-center mx-auto"
-                  >
-                    <v-select
-                      id="comorbid"
-                      ref="comorbid"
-                      v-model="editedProfile.comorbid"
-                      :items="comorbids"
-                      item-text="name"
-                      item-value="value"
-                      multiple
-                      :label="masalahKesihatanLabel"
-                      validate-on-blur
-                      :rules="comorbidRequiredRule"
-                      required
-                      @change="clearNoMasalahKesihatan"
-                    >
-                      <template #prepend-item>
-                        <v-list-item
-                          ripple
-                          @click="toggleNoMasalahKesihatan"
-                        >
-                          <v-list-item-action>
-                            <v-icon
-                              v-if="!toTickNoMasalahKesihatanIcon"
-                            >
-                              mdi-checkbox-blank-outline
-                            </v-icon>
-                            <v-icon
-                              v-else-if="toTickNoMasalahKesihatanIcon"
-                              color="teal accent-4"
-                            >
-                              mdi-close-box
-                            </v-icon>
-                          </v-list-item-action>
-                          <v-list-item-content>
-                            <v-list-item-title>
-                              Tiada masalah kesihatan
-                            </v-list-item-title>
-                          </v-list-item-content>
-                        </v-list-item>
-                        <v-divider class="mt-2" />
-                      </template>
-                    </v-select>
-                  </v-col>
-
-                  <!-- CONTACTTO -->
-                  <v-col
-                    v-if="mode!=='1'"
-                    cols="12"
-                    md="4"
-                    sm="11"
-                    class="text-center mx-auto"
-                  >
-                    <v-text-field
-                      id="contactto"
-                      ref="contactto"
-                      v-model="editedProfile.contactto"
-                      label="Kontak Kepada Siapa"
-                      validate-on-blur
-                      :rules="identRules"
-                      required
-                    />
-                  </v-col>
-
-                  <!-- LASTCONTACT -->
-                  <v-col
-                    v-if="mode!=='1'"
-                    cols="12"
-                    md="4"
-                    sm="11"
-                    class="text-center mx-auto"
-                  >
-                    <v-menu
-                      v-model="lastcontactMenu"
-                      :close-on-content-click="false"
-                      :nudge-right="40"
-                      lazy
-                      transition="scale-transition"
-                      offset-y
-                      full-width
-                      max-width="290px"
-                      min-width="290px"
-                    >
-                      <template #activator="{ on }">
-                        <v-text-field
-                          id="lastcontact"
-                          ref="lastcontact"
-                          :value="lastcontactVal"
-                          label="Tarikh Last Kontak"
-                          prepend-icon="mdi-calendar"
-                          readonly
-                          :rules="requiredRule"
-                          :error-messages="requiredProfErrMsg.lastcontact"
-                          v-on="on"
+                      <!-- DIVIDER -->
+                      <v-subheader
+                        v-else-if="item.divider"
+                        :key="item.idx"
+                      >
+                        <v-divider
+                          :inset="item.inset"
                         />
-                      </template>
-                      <v-date-picker
-                        v-model="editedProfile.lastcontact"
-                        :allowed-dates="checkNotAfterToday"
-                        locale="en-in"
-                        no-title
-                        scrollable
-                        @input="refreshLastcontact"
-                      />
-                    </v-menu>
-                  </v-col>
+                      </v-subheader>
 
-                  <!-- SYMPTOMS -->
-                  <v-col
-                    v-if="mode!=='1'"
-                    cols="12"
-                    md="4"
-                    sm="11"
-                    class="text-center mx-auto"
-                  >
-                    <v-select
-                      id="symptoms"
-                      ref="symptoms"
-                      v-model="editedProfile.symptoms"
-                      :items="symptoms"
-                      item-text="name"
-                      item-value="value"
-                      multiple
-                      :label="symptomsLabel"
-                      validate-on-blur
-                      :rules="symptomsRequiredRule"
-                      required
-                      @change="clearNoSymptoms"
-                    >
-                      <template #prepend-item>
-                        <v-list-item
-                          ripple
-                          @click="toggleNoSymptoms"
-                        >
-                          <v-list-item-action>
-                            <v-icon
-                              v-if="!toTickNoSymptomsIcon"
-                            >
-                              mdi-checkbox-blank-outline
-                            </v-icon>
-                            <v-icon
-                              v-else-if="toTickNoSymptomsIcon"
-                              color="teal accent-4"
-                            >
-                              mdi-close-box
-                            </v-icon>
-                          </v-list-item-action>
-                          <v-list-item-content>
-                            <v-list-item-title>
-                              Tiada simtom
-                            </v-list-item-title>
-                          </v-list-item-content>
-                        </v-list-item>
-                        <v-divider class="mt-2" />
-                      </template>
-                    </v-select>
-                  </v-col>
+                      <!-- LIST OF OFFICERS -->
+                      <v-list-item
+                        v-else
+                      >
+                        <v-list-item-avatar>
+                          <v-avatar
+                            color="teal lighten-5"
+                            size="40"
+                            class="teal--text text--accent-4"
+                          >
+                            {{ item.initials }}
+                          </v-avatar>
+                        </v-list-item-avatar>
 
-                  <!-- ONSET -->
-                  <v-col
-                    v-if="mode!=='1'"
-                    cols="12"
-                    md="4"
-                    sm="11"
-                    class="text-center mx-auto"
-                  >
-                    <v-menu
-                      v-model="onsetMenu"
-                      :close-on-content-click="false"
-                      :nudge-right="40"
-                      lazy
-                      transition="scale-transition"
-                      offset-y
-                      full-width
-                      max-width="290px"
-                      min-width="290px"
-                    >
-                      <template #activator="{ on }">
-                        <v-text-field
-                          id="onset"
-                          ref="onset"
-                          :disabled="editedProfile.symptoms[0]==='nosx'"
-                          :value="onsetVal"
-                          label="Tarikh Onset Simtom"
-                          prepend-icon="mdi-calendar"
-                          readonly
-                          :rules="requiredRule"
-                          :error-messages="requiredProfErrMsg.onset"
-                          v-on="on"
-                        />
-                      </template>
-                      <v-date-picker
-                        v-model="editedProfile.onset"
-                        :allowed-dates="checkNotAfterToday"
-                        locale="en-in"
-                        no-title
-                        scrollable
-                        @input="refreshOnset"
-                      />
-                    </v-menu>
-                  </v-col>
+                        <v-list-item-content>
+                          <v-list-item-title class="ml-4">
+                            {{ item.name }}
+                          </v-list-item-title>
+                        </v-list-item-content>
 
-                  <!-- WORKLOC -->
-                  <v-col
-                    v-if="mode!=='1'"
-                    cols="12"
-                    md="4"
-                    sm="11"
-                    class="text-center mx-auto"
-                  >
-                    <v-text-field
-                      id="workloc"
-                      ref="workloc"
-                      v-model="editedProfile.workloc"
-                      label="Lokasi Tempat Kerja"
-                      validate-on-blur
-                      :rules="requiredRule"
-                      required
-                    />
-                  </v-col>
-
-                  <!-- V-BTN: ADD PEOPLE -->
-                  <v-col
-                    cols="12"
-                    md="12"
-                    sm="11"
-                    class="text-center mx-auto"
-                  >
-                    <v-btn
-                      v-if="editedIdx===undefined"
-                      :disabled="!editedProfile.ident"
-                      @click="addPeople"
-                    >
-                      Tambah
-                    </v-btn>
-                    <v-btn
-                      v-else
-                      :disabled="!editedProfile.ident"
-                      @click="saveEdit"
-                    >
-                      Edit
-                    </v-btn>
-                  </v-col>
-                </v-row>
-              </v-form>
-            </v-card-text>
-          </v-card>
+                        <!-- :input-value="active"  -->
+                        <v-list-item-action>
+                          <v-checkbox
+                            v-model="item.tick"
+                            @change="toggleOfficer(item)"
+                          />
+                        </v-list-item-action>
+                      </v-list-item>
+                    </template>
+                  </v-virtual-scroll>
+                </v-list>
+              </v-card>
+            </v-tab-item>
+          </v-tabs-items>
         </v-col>
       </v-row>
     </v-sheet>
@@ -975,19 +633,33 @@ export default {
 
   data () {
     return {
-      // Wbkcase Form   
+      // Wbkcase Form
       newCaseRegForm: false,
-      cases: [],   
+      selectedCase: undefined,
+      cases: [],
+      // officersPerCase: {},
+      officersPerCase: [],
+      officers: [],
+      officersDisp: [
+        { header: 'Unit Tibi' },
+        { initials: 'A', name: 'personA', ident: '1', tick: false },
+        { divider: true, inset: true, idx: 0 },
+        { initials: 'B', name: 'personB', ident: '2', tick: false },
+        { divider: true, inset: true, idx: 1 },
+        { initials: 'C', name: 'personC', ident: '3', tick: false }
+      ],
       editedCase: {
         casename: '',
         district: '',
-        state: '',
+        state: ''
       },
       defaultCase: {
         casename: '',
         district: '',
-        state: '',
+        state: ''
       },
+      tab: null,
+      tabItems: ['IK', 'MA', 'SN'],
       // locality: '',
       // district: 'Maran',
       // state: 'Pahang',
@@ -996,11 +668,10 @@ export default {
       // hasBeenVerified: false,
       // verifiedBy: '',
 
-      // Input Form      
+      // Input Form
       newPeopleInHseCard: false,
-      selectedHse: undefined,
       address: '',
-      hseAddresses: [],
+      // cases: [],
       peopleInHse: {},
       peoples: [],
       editedIdx: undefined,
@@ -1151,6 +822,18 @@ export default {
   },
 
   computed: {
+    pegawaiBertugasIcon () {
+      if (this.tab === 0) {
+        return 'mdi-human-male'
+      } else if (this.tab === 1) {
+        return 'mdi-doctor'
+      } else if (this.tab === 2) {
+        return 'mdi-mother-heart'
+      } else {
+        return ''
+      }
+    },
+
     dobVal () {
       return this.editedProfile.dob
     },
@@ -1225,84 +908,12 @@ export default {
 
   },
 
-  async created () {
-    if (this.mode === '2') {
-      const payload = {
-        casename: this.casename,
-        assignedToIk: this.assignedToIk
-      }
-
-      try {
-        let response
-        if (process.env.NODE_ENV === 'production') {
-          response = await this.$axios.post(
-            'https://mywabak.com/cc/new/get',
-            payload
-          )
-        } else {
-          response = await this.$axios.post(
-            'http://localhost:8080/cc/new/get',
-            payload
-          )
-        }
-        if (!response.data.closeContacts ||
-          response.data.closeContacts.length === 0) {
-          alert('Tiada pendaftaran kontak rapat baru untuk kes ini')
-          return
-        }
-
-        const addresses = []
-        const ccInHse = {}
-        for (let i = 0; i < response.data.closeContacts.length; i++) {
-          const cc = response.data.closeContacts[i]
-
-          // To keep a copy of the unverified ID (uvIdent)
-          // given by the public in mode 1. So that in the
-          // event it was an incorrect ID and has been
-          // corrected by staff in mode 2, we need a copy
-          // for the db to delete the temporary entry created
-          // in the secondary people table in mode 1.
-          cc.uvIdent = cc.ident
-
-          // contactto, lastcontact, symptosm, onset & workloc
-          // are not expected to be filled by public in mode 1.
-          // Thus they are given a default value here on
-          // retrieving back these info from the server in mode 2.
-          // Should you decide to add any of them to the form
-          // to be filled by the public, you then need to
-          // remove the line below accordingly.
-          if (!cc.contactto) { cc.contactto = '' }
-          if (!cc.lastcontact) { cc.lastcontact = '' }
-          if (!cc.symptoms) { cc.symptoms = [] }
-          if (!cc.onset) { cc.onset = '' }
-          if (!cc.workloc) { cc.workloc = '' }
-
-          let addIdx = addresses.indexOf(cc.address)
-          if (addIdx === -1) {
-            addresses.push(cc.address)
-            addIdx = addresses.indexOf(cc.address)
-            ccInHse[addIdx] = [cc]
-          } else {
-            ccInHse[addIdx].push(cc)
-          }
-        }
-        this.hseAddresses = [...addresses]
-        this.peopleInHse = Object.assign({}, ccInHse)
-      } catch (error) {
-        if (error.response) {
-          alert('Masalah network, sila cuba sebentar lagi')
-        } else if (error.request) {
-          //
-        } else {
-          //
-        }
-      }
-    }
-  },
-
   methods: {
     addCase () {
-      //
+      const newCase = Object.assign({}, this.editedCase)
+      this.cases.push(newCase)
+      this.newCaseRegForm = false
+      this.editedCase = Object.assign({}, this.defaultCase)
     },
 
     // ============================
@@ -1331,7 +942,7 @@ export default {
     },
 
     addAddress () {
-      this.hseAddresses.push(this.address)
+      this.cases.push(this.address)
       this.newCaseRegForm = false
       this.address = ''
     },
@@ -1369,7 +980,7 @@ export default {
       this.editedProfile.symptoms.splice(idx, 1)
     },
 
-    showCCDetail (idx, people) {
+    showOfficerDetail (idx, people) {
       if (this.mode === '1') {
         return
       }
@@ -1387,17 +998,12 @@ export default {
     saveEdit () {
       if (this.validateCCForm()) {
         this.editedProfile.hasbeenreviewed = true
-        this.peopleInHse[this.selectedHse][this.editedIdx] = Object.assign({}, this.editedProfile)
-        // reloadPeople() will reset editedProfile, editedIdx, requiredProfErrMsg.
-        // reloadPeople() then copy the updated this.peopleInHse back to this.peoples.
-        this.reloadPeople()
+        this.peopleInHse[this.selectedCase][this.editedIdx] = Object.assign({}, this.editedProfile)
+        // reloadPegawai() will reset editedProfile, editedIdx, requiredProfErrMsg.
+        // reloadPegawai() then copy the updated this.peopleInHse back to this.peoples.
+        this.reloadPegawai()
         // this.newPeopleInHseCard = false
       }
-    },
-
-    removePeopleVchip (idx) {
-      this.peopleInHse[this.selectedHse].splice(idx, 1)
-      this.$nextTick(this.reloadPeople())
     },
 
     clearEditedProfileAndIdx () {
@@ -1414,23 +1020,6 @@ export default {
       const formKeys = Object.keys(form)
       for (let i = 0; i < formKeys.length; i++) {
         this.$refs[formKeys[i]].reset()
-      }
-    },
-
-    reloadPeople () {
-      this.clearEditedProfileAndIdx()
-      this.newPeopleInHseCard = false
-
-      if (this.selectedHse === undefined) {
-        this.peoples.length = 0
-        this.peoples = []
-        return
-      }
-
-      if (Array.isArray(this.peopleInHse[this.selectedHse])) {
-        this.peoples = [...this.peopleInHse[this.selectedHse]]
-      } else {
-        this.peoples = []
       }
     },
 
@@ -1459,25 +1048,71 @@ export default {
       return isValid
     },
 
-    checkIfIdentConflict (id) {
-      const keys = Object.keys(this.peopleInHse)
+    reloadPegawai () {
+      // this.clearEditedProfileAndIdx()
+      // this.newPeopleInHseCard = false
 
-      for (let j = 0; j < keys.length; j++) {
-        const key = keys[j]
-        if (Array.isArray(this.peopleInHse[key])) {
-          for (let i = 0; i < this.peopleInHse[key].length; i++) {
-            if (this.peopleInHse[key][i].ident === id) {
-              return {
-                res: false,
-                add: this.hseAddresses[j],
-                name: this.peopleInHse[key][i].name
-              }
-            }
-          }
+      // if (this.selectedCase === undefined) {
+      //   this.officers.length = 0
+      //   this.officers = []
+      //   this.tab = undefined
+      //   return
+      // }
+
+      if (Array.isArray(this.officersPerCase[this.selectedCase])) {
+        this.officers = [...this.officersPerCase[this.selectedCase]]
+      } else {
+        this.officers = []
+      }
+      this.tab = 0
+    },
+
+    // checkIfIdentConflict (officer) {
+    //   for (let i = 0; i < this.officersPerCase[this.selectedCase].length; i++) {
+    //     const o = this.officersPerCase[this.selectedCase][i]
+    //     if (o.ident === officer.ident) {
+    //       return {
+    //         res: false,
+    //         case: this.cases[i],
+    //         name: o.name
+    //       }
+    //     }
+    //   }
+    //   return { res: true }
+    // },
+
+    removeOfficerVchip (idx) {
+      this.officers.splice(idx, 1)
+    },
+
+    removeOfficerFromCase (officer) {
+      for (let i = 0; i < this.officers.length; i++) {
+        if (this.officers[i].ident === officer.ident) {
+          this.officers.splice(i, 1)
+          return
         }
       }
+    },
 
-      return { res: true }
+    toggleOfficer (officer) {
+      if (officer.tick) {
+        // if (Array.isArray(this.officersPerCase[this.selectedCase])) {
+        //   this.officersPerCase[this.selectedCase].push(
+        //     { name: officer.name, ident: officer.ident }
+        //   )
+        // } else {
+        //   this.officersPerCase[this.selectedCase] = [
+        //     { name: officer.name, ident: officer.ident }
+        //   ]
+        // }
+        // this.reloadPegawai()
+
+        this.officers.push(
+          { name: officer.name, ident: officer.ident }
+        )
+      } else {
+        this.removeOfficerFromCase(officer)
+      }
     },
 
     addPeople () {
@@ -1496,20 +1131,20 @@ export default {
 
         const newPeople = Object.assign({}, this.editedProfile)
 
-        if (Array.isArray(this.peopleInHse[this.selectedHse])) {
-          this.peopleInHse[this.selectedHse].push(newPeople)
+        if (Array.isArray(this.peopleInHse[this.selectedCase])) {
+          this.peopleInHse[this.selectedCase].push(newPeople)
         } else {
-          this.peopleInHse[this.selectedHse] = [newPeople]
+          this.peopleInHse[this.selectedCase] = [newPeople]
         }
         this.editedProfile = Object.assign({}, this.defaultProfile)
         this.$refs.dob.reset() // manually clearing dob field validation error
         this.newPeopleInHseCard = false
-        this.reloadPeople()
+        this.reloadPegawai()
       }
     },
 
     hseAddressNotEmpty () {
-      return this.hseAddresses.length > 0
+      return this.cases.length > 0
     },
 
     peopleInHseNotEmpty () {
@@ -1530,11 +1165,11 @@ export default {
     prepareCCDataForPayload () {
       const ccRegs = []
 
-      for (let i = 0; i < this.hseAddresses.length; i++) {
+      for (let i = 0; i < this.cases.length; i++) {
         if (Array.isArray(this.peopleInHse[i])) {
           if (this.peopleInHse[i].length > 0) {
             const ccReg = {
-              address: this.hseAddresses[i],
+              address: this.cases[i],
               locality: this.locality,
               district: this.district,
               state: this.state,
@@ -1548,7 +1183,7 @@ export default {
     },
 
     checkAllNewCCHasBeenReviewed () {
-      for (let i = 0; i < this.hseAddresses.length; i++) {
+      for (let i = 0; i < this.cases.length; i++) {
         if (Array.isArray(this.peopleInHse[i])) {
           if (this.peopleInHse[i].length > 0) {
             for (let j = 0; j < this.peopleInHse[i].length; j++) {
@@ -1556,7 +1191,7 @@ export default {
               if (this.peopleInHse[i][j].hasbeenreviewed === false) {
                 return {
                   res: false,
-                  address: this.hseAddresses[i],
+                  address: this.cases[i],
                   name: this.peopleInHse[i][j].name
                 }
               }
