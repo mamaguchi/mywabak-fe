@@ -93,8 +93,24 @@
                     <v-text-field
                       id="casename"
                       v-model="editedCase.casename"
-                      label="Nama kes baru"
+                      label="Nama kes"
+                      color="teal accent-4"
                       autofocus
+                    />
+                  </v-col>
+
+                  <!-- CASEDESC -->
+                  <v-col
+                    cols="12"
+                    md="12"
+                    sm="11"
+                    class="text-center mx-auto"
+                  >
+                    <v-text-field
+                      id="casedesc"
+                      v-model="editedCase.casedesc"
+                      label="Deskripsi kes"
+                      color="teal accent-4"
                     />
                   </v-col>
 
@@ -109,6 +125,7 @@
                       id="profileLocality"
                       v-model="editedCase.locality"
                       label="Locality/Taman"
+                      color="teal accent-4"
                       :error-messages="requiredProfErrMsg.locality"
                       @change="requiredProfErrMsg.locality=''"
                     />
@@ -125,6 +142,7 @@
                       id="district"
                       v-model="editedCase.district"
                       label="Daerah"
+                      color="teal accent-4"
                     />
                   </v-col>
 
@@ -140,6 +158,7 @@
                       v-model="editedCase.state"
                       :items="states"
                       label="Negeri"
+                      color="teal accent-4"
                     />
                   </v-col>
 
@@ -175,178 +194,6 @@
     >
       <v-row dense>
         <!-- TITLE: LANGKAH KE-2 -->
-        <!-- <v-col
-          cols="12"
-          md="10"
-          sm="10"
-          xs="12"
-          class="mx-auto mt-10 text-left"
-        >
-          <span
-            class="text-subtitle-2 font-weight-medium"
-          >
-            2.
-          </span>
-          <span
-            class="ml-2 text-subtitle-1 font-weight-light"
-          >
-            Pilih Kes
-          </span>
-        </v-col> -->
-
-        <!-- TITLE: KES -->
-        <!-- <v-col
-          cols="12"
-          md="5"
-          sm="6"
-          xs="12"
-          class="ml-auto mt-8"
-        >
-          <v-row justify="center">
-            <v-btn
-              small
-              disabled
-              style="cursor:default"
-              text
-              class="rounded-pill teal lighten-5"
-            >
-              <span
-                class="teal--text text--accent-4"
-              >
-                Kes
-              </span>
-            </v-btn>
-          </v-row>
-        </v-col> -->
-
-        <!-- TITLE: PEGAWAI BERTUGAS (xs hidden, sm onwards visible)-->
-        <!-- <v-col
-          cols="12"
-          md="5"
-          sm="4"
-          xs="10"
-          class="d-none d-sm-flex mr-auto mt-8"
-        >
-          <v-row justify="center">
-            <v-btn
-              small
-              disabled
-              style="cursor:default"
-              text
-              class="rounded-pill teal lighten-5"
-            >
-              <span
-                class="teal--text text--accent-4"
-              >
-                Pegawai Bertugas
-              </span>
-            </v-btn>
-          </v-row>
-        </v-col> -->
-
-        <!-- V-BTN: KES DISPLAY -->
-        <!-- <v-col
-          cols="12"
-          md="5"
-          sm="6"
-          xs="12"
-          class="ml-auto mt-8 text-left"
-        >
-          <v-btn-toggle
-            v-model="selectedCase"
-            color="light-blue darken-3"
-            class="d-flex flex-column"
-            @change="reloadPegawai"
-          >
-            <v-btn
-              v-for="(c, j) in cases"
-              :key="j"
-              :value="j"
-              small
-              class="elevation-1 mb-2 text-left"
-            >
-              <v-row justify="left">
-                <v-icon
-                  color="blue-grey darken-2"
-                  class="ml-1"
-                >
-                  mdi-file-document
-                </v-icon>
-                <span
-
-                  class="mt-1 text-caption font-weight-medium"
-                >
-                  {{ c.casename }}
-                </span>
-              </v-row>
-            </v-btn>
-          </v-btn-toggle>
-        </v-col> -->
-
-        <!-- TITLE: PEGAWAI BERTUGAS (xs only visible)-->
-        <!-- <v-col
-          cols="12"
-          md="5"
-          sm="4"
-          xs="12"
-          class="d-flex d-sm-none mr-auto mt-8"
-        >
-          <v-row justify="center">
-            <v-btn
-              small
-              disabled
-              style="cursor:default"
-              text
-              class="rounded-pill teal lighten-5"
-            >
-              <span
-                class="teal--text text--accent-4"
-              >
-                Pegawait Bertugas
-              </span>
-            </v-btn>
-          </v-row>
-        </v-col> -->
-
-        <!-- V-DIVIDER-VERTICAL (xs hidden, sm onwards visible)-->
-        <!-- <v-col
-          style="height: 200px"
-          cols="12"
-          md="1"
-          sm="1"
-          xs="0"
-          class="d-none d-sm-flex mt-8 mb-n2"
-        >
-          <v-divider vertical />
-        </v-col> -->
-
-        <!-- V-CHIP: PEGAWAI (OFFICER) -->
-        <!-- <v-col
-          cols="12"
-          md="4"
-          sm="3"
-          xs="12"
-          class="mr-auto mt-8 text-left"
-        >
-          <v-chip
-            v-for="(officer, i) in officers"
-            :key="officer.ident"
-            :outlined="editedIdx!==i"
-            :color="editedIdx===i? 'teal accent-4' : 'blue-grey darken-2'"
-            class="ma-1"
-            close
-            @click="showOfficerDetail(i, officer)"
-            @click:close="removeOfficerVchip(officer)"
-          >
-            <span
-              class="text-caption font-weight-medium"
-            >
-              {{ officer.name }}
-            </span>
-          </v-chip>
-        </v-col> -->
-
-        <!-- TITLE: LANGKAH KE-2 -->
         <v-col
           cols="12"
           md="10"
@@ -381,8 +228,8 @@
           class="mx-auto mt-8"
         >
           <v-row
-            justify="left"
-            class="ml-4"
+            justify="start"
+            class="ml-5"
           >
             <v-btn
               small
@@ -394,7 +241,7 @@
               <span
                 class="teal--text text--accent-4"
               >
-                Pegawait Bertugas
+                Pegawai Bertugas
               </span>
             </v-btn>
           </v-row>
@@ -410,22 +257,116 @@
           class="mx-auto mt-8 text-left"
         >
           <div class="ml-4">
-            <v-chip
+            <v-menu
               v-for="(officer, i) in officers"
               :key="officer.ident"
-              :outlined="editedIdx!==i"
-              :color="editedIdx===i? 'teal accent-4' : 'blue-grey darken-2'"
-              class="ma-1"
-              close
-              @click="showOfficerDetail(i, officer)"
-              @click:close="removeOfficerVchip(i)"
+              v-model="officer.menu"
+              :close-on-content-click="false"
+              :nudge-width="200"
+              offset-x
             >
-              <span
-                class="text-caption font-weight-medium"
-              >
-                {{ officer.name }}
-              </span>
-            </v-chip>
+              <template #activator="{ on, attrs }">
+                <v-chip
+                  :outlined="editedIdx!==i"
+                  :color="editedIdx===i? 'teal accent-4' : 'blue-grey darken-2'"
+                  class="ma-1"
+                  close
+                  v-bind="attrs"
+                  @click:close="removeOfficerVchip(i)"
+                  v-on="on"
+                >
+                  <span
+                    class="text-caption font-weight-medium"
+                  >
+                    {{ officer.name }}
+                  </span>
+                </v-chip>
+              </template>
+
+              <v-card>
+                <v-list>
+                  <!-- URL -->
+                  <v-list-item>
+                    <v-list-item-icon>
+                      <v-icon large>
+                        mdi-file-link
+                      </v-icon>
+                    </v-list-item-icon>
+                    <v-list-item-content>
+                      <v-list-item-title>URL</v-list-item-title>
+                      <v-list-item-subtitle>Borang Daftar Kontak Rapat</v-list-item-subtitle>
+                      <span>some url here...</span>
+                    </v-list-item-content>
+                    <v-list-item-action>
+                      <v-btn icon>
+                        <v-icon
+                          color="teal accent-4"
+                        >
+                          mdi-clipboard-file
+                        </v-icon>
+                      </v-btn>
+                    </v-list-item-action>
+
+                    <v-list-item-action>
+                      <v-btn icon>
+                        <v-icon
+                          color="teal accent-4"
+                        >
+                          mdi-share
+                        </v-icon>
+                      </v-btn>
+                    </v-list-item-action>
+                  </v-list-item>
+
+                  <!-- DIVIDER -->
+                  <v-subheader>
+                    <v-divider
+                      inset
+                    />
+                  </v-subheader>
+
+                  <!-- QR CODE -->
+                  <v-list-item>
+                    <v-list-item-icon>
+                      <v-icon large>
+                        mdi-file
+                      </v-icon>
+                      <v-icon
+                        small
+                        color="white"
+                        class="ml-n7 mb-n2 mr-3"
+                      >
+                        mdi-qrcode
+                      </v-icon>
+                    </v-list-item-icon>
+                    <v-list-item-content>
+                      <v-list-item-title>QR Code</v-list-item-title>
+                      <v-list-item-subtitle>Borang Daftar Kontak Rapat</v-list-item-subtitle>
+                      <span>some url here...</span>
+                    </v-list-item-content>
+                    <v-list-item-action>
+                      <v-btn icon>
+                        <v-icon
+                          color="teal accent-4"
+                        >
+                          mdi-clipboard-file
+                        </v-icon>
+                      </v-btn>
+                    </v-list-item-action>
+
+                    <v-list-item-action>
+                      <v-btn icon>
+                        <v-icon
+                          color="teal accent-4"
+                        >
+                          mdi-share
+                        </v-icon>
+                      </v-btn>
+                    </v-list-item-action>
+                  </v-list-item>
+                </v-list>
+              </v-card>
+            </v-menu>
           </div>
         </v-col>
       </v-row>
@@ -552,7 +493,8 @@
                         <v-list-item-action>
                           <v-checkbox
                             v-model="item.tick"
-                            @change="toggleOfficer(item)"
+                            color="teal accent-4"
+                            @change="addRemoveOfficer(item)"
                           />
                         </v-list-item-action>
                       </v-list-item>
@@ -583,12 +525,12 @@
           <span
             class="text-subtitle-2 font-weight-medium"
           >
-            4.
+            3.
           </span>
           <span
             class="ml-2 text-subtitle-1 font-weight-light"
           >
-            Siap dan hantar
+            Siap
           </span>
         </v-col>
 
@@ -608,7 +550,7 @@
               <span
                 class="blue-grey--text text--lighten-5 font-weight-bold"
               >
-                Submit
+                Save
               </span>
             </v-btn>
           </v-row>
@@ -619,8 +561,6 @@
 </template>
 
 <script>
-import { compareAsc } from 'date-fns'
-
 export default {
   name: 'CloseContactRegForm',
 
@@ -633,11 +573,13 @@ export default {
 
   data () {
     return {
+      tab: null,
+      tabItems: ['IK', 'MA', 'SN'],
+
       // Wbkcase Form
       newCaseRegForm: false,
       selectedCase: undefined,
       cases: [],
-      // officersPerCase: {},
       officersPerCase: [],
       officers: [],
       officersDisp: [
@@ -650,6 +592,7 @@ export default {
       ],
       editedCase: {
         casename: '',
+        casedesc: '',
         district: '',
         state: ''
       },
@@ -658,8 +601,7 @@ export default {
         district: '',
         state: ''
       },
-      tab: null,
-      tabItems: ['IK', 'MA', 'SN'],
+
       // locality: '',
       // district: 'Maran',
       // state: 'Pahang',
@@ -669,11 +611,6 @@ export default {
       // verifiedBy: '',
 
       // Input Form
-      newPeopleInHseCard: false,
-      address: '',
-      // cases: [],
-      peopleInHse: {},
-      peoples: [],
       editedIdx: undefined,
       editedProfile: {
         hasbeenreviewed: '',
@@ -728,10 +665,7 @@ export default {
         onset: ''
       },
 
-      // New Close Contact(People) Form
-      dobMenu: false,
-      lastcontactMenu: false,
-      onsetMenu: false,
+      // v-select Selections
       gender: ['Male', 'Female'],
       race: [
         'Malay',
@@ -757,26 +691,6 @@ export default {
         'Sabah',
         'Sarawak',
         'Pulau Labuan'
-      ],
-      comorbids: [
-        { name: 'Darah Tinggi', value: 'hpt' },
-        { name: 'Kencing Manis', value: 'dm' },
-        { name: 'Masalah Jantung', value: 'cvd' },
-        { name: 'Asma', value: 'asthma' },
-        { name: 'COPD', value: 'copd' },
-        { name: 'Penyakit Buah Pinggang', value: 'ckd' },
-        { name: 'Kanser', value: 'cancer' }
-      ],
-      symptoms: [
-        { name: 'Deman', value: 'fever' },
-        { name: 'Batuk', value: 'cough' },
-        { name: 'Selsema', value: 'runnynose' },
-        { name: 'Sakit Tekak', value: 'sorethroat' },
-        { name: 'Muntah', value: 'vomiting' },
-        { name: 'Cirit-birit', value: 'diarhoea' },
-        { name: 'Hilang Deria Baru', value: 'anosmia' },
-        { name: 'Hilang Deria Rasa', value: 'ageusia' },
-        { name: 'Kurang Selera Makan', value: 'loa' }
       ],
 
       /* FORM FIELD RULES */
@@ -824,7 +738,7 @@ export default {
   computed: {
     pegawaiBertugasIcon () {
       if (this.tab === 0) {
-        return 'mdi-human-male'
+        return 'mdi-account-tie'
       } else if (this.tab === 1) {
         return 'mdi-doctor'
       } else if (this.tab === 2) {
@@ -834,19 +748,7 @@ export default {
       }
     },
 
-    dobVal () {
-      return this.editedProfile.dob
-    },
-
-    lastcontactVal () {
-      return this.editedProfile.lastcontact
-    },
-
-    onsetVal () {
-      return this.editedProfile.onset
-    },
-
-    formMode1 () {
+    form () {
       return {
         name: this.editedProfile.name,
         ident: this.editedProfile.ident,
@@ -858,52 +760,6 @@ export default {
         tel: this.editedProfile.tel,
         comorbid: this.editedProfile.comorbid
       }
-    },
-
-    formMode2 () {
-      return {
-        contactto: this.editedProfile.contactto,
-        lastcontact: this.editedProfile.lastcontact,
-        symptoms: this.editedProfile.symptoms,
-        onset: this.editedProfile.onset,
-        workloc: this.editedProfile.workloc
-      }
-    },
-
-    toTickNoMasalahKesihatanIcon () {
-      if (this.editedProfile.comorbid.includes('nkmi')) {
-        // return 'mdi-close-box'
-        return true
-      } else {
-        // return 'mdi-checkbox-blank-outline'
-        return false
-      }
-    },
-
-    toTickNoSymptomsIcon () {
-      if (this.editedProfile.symptoms.includes('nosx')) {
-        // return 'mdi-close-box'
-        return true
-      } else {
-        // return 'mdi-checkbox-blank-outline'
-        return false
-      }
-    },
-
-    masalahKesihatanLabel () {
-      if (this.editedProfile.comorbid.includes('nkmi')) {
-        return 'Tiada Masalah Kesihatan'
-      } else {
-        return 'Masalah Kesihatan'
-      }
-    },
-
-    symptomsLabel () {
-      if (this.editedProfile.symptoms.includes('nosx')) {
-        return 'Tiada simtom'
-      } else {
-        return 'Simtom'
-      }
     }
 
   },
@@ -912,72 +768,7 @@ export default {
     addCase () {
       const newCase = Object.assign({}, this.editedCase)
       this.cases.push(newCase)
-      this.newCaseRegForm = false
       this.editedCase = Object.assign({}, this.defaultCase)
-    },
-
-    // ============================
-
-    checkNotAfterToday (date) {
-      if (compareAsc(new Date(), new Date(date)) < 0) {
-        return false
-      } else {
-        return true
-      }
-    },
-
-    refreshDob () {
-      this.requiredProfErrMsg.dob = ''
-      this.dobMenu = false
-    },
-
-    refreshLastcontact () {
-      this.requiredProfErrMsg.lastcontact = ''
-      this.lastcontactMenu = false
-    },
-
-    refreshOnset () {
-      this.requiredProfErrMsg.onset = ''
-      this.onsetMenu = false
-    },
-
-    addAddress () {
-      this.cases.push(this.address)
-      this.newCaseRegForm = false
-      this.address = ''
-    },
-
-    toggleNoMasalahKesihatan () {
-      if (this.editedProfile.comorbid.includes('nkmi')) {
-        this.editedProfile.comorbid = []
-      } else {
-        this.editedProfile.comorbid.length = 0
-        this.editedProfile.comorbid = ['nkmi']
-      }
-    },
-
-    clearNoMasalahKesihatan () {
-      const idx = this.editedProfile.comorbid.indexOf('nkmi')
-      if (idx === -1) { return }
-      // Remove 'nkmi' from 'this.editedProfile.comorbid
-      this.editedProfile.comorbid.splice(idx, 1)
-    },
-
-    toggleNoSymptoms () {
-      if (this.editedProfile.symptoms.includes('nosx')) {
-        this.editedProfile.symptoms = []
-      } else {
-        this.editedProfile.symptoms.length = 0
-        this.editedProfile.symptoms = ['nosx']
-        this.editedProfile.onset = ''
-      }
-    },
-
-    clearNoSymptoms () {
-      const idx = this.editedProfile.symptoms.indexOf('nosx')
-      if (idx === -1) { return }
-      // Remove 'nosx' from 'this.editedProfile.symptoms
-      this.editedProfile.symptoms.splice(idx, 1)
     },
 
     showOfficerDetail (idx, people) {
@@ -1067,21 +858,15 @@ export default {
       this.tab = 0
     },
 
-    // checkIfIdentConflict (officer) {
-    //   for (let i = 0; i < this.officersPerCase[this.selectedCase].length; i++) {
-    //     const o = this.officersPerCase[this.selectedCase][i]
-    //     if (o.ident === officer.ident) {
-    //       return {
-    //         res: false,
-    //         case: this.cases[i],
-    //         name: o.name
-    //       }
-    //     }
-    //   }
-    //   return { res: true }
-    // },
-
     removeOfficerVchip (idx) {
+      const identToRemove = this.officers[idx].ident
+      for (let i = 0; i < this.officersDisp.length; i++) {
+        const item = this.officersDisp[i]
+        if (item.ident && item.ident === identToRemove) {
+          item.tick = false
+          break
+        }
+      }
       this.officers.splice(idx, 1)
     },
 
@@ -1094,52 +879,15 @@ export default {
       }
     },
 
-    toggleOfficer (officer) {
+    addRemoveOfficer (officer) {
       if (officer.tick) {
-        // if (Array.isArray(this.officersPerCase[this.selectedCase])) {
-        //   this.officersPerCase[this.selectedCase].push(
-        //     { name: officer.name, ident: officer.ident }
-        //   )
-        // } else {
-        //   this.officersPerCase[this.selectedCase] = [
-        //     { name: officer.name, ident: officer.ident }
-        //   ]
-        // }
-        // this.reloadPegawai()
-
-        this.officers.push(
-          { name: officer.name, ident: officer.ident }
-        )
+        this.officers.push({
+          name: officer.name,
+          ident: officer.ident,
+          menu: false
+        })
       } else {
         this.removeOfficerFromCase(officer)
-      }
-    },
-
-    addPeople () {
-      if (this.validateCCForm()) {
-        if (this.mode !== '1') {
-          this.editedProfile.hasbeenreviewed = true
-        }
-
-        const identConflictCheck = this.checkIfIdentConflict(this.editedProfile.ident)
-        if (!identConflictCheck.res) {
-          alert('ID ini sudah diberi kepada ' +
-              identConflictCheck.name + ' dari ' +
-              identConflictCheck.add + ' tadi. Anda tidak boleh tambah ID yang sama lebih daripada sekali.')
-          return
-        }
-
-        const newPeople = Object.assign({}, this.editedProfile)
-
-        if (Array.isArray(this.peopleInHse[this.selectedCase])) {
-          this.peopleInHse[this.selectedCase].push(newPeople)
-        } else {
-          this.peopleInHse[this.selectedCase] = [newPeople]
-        }
-        this.editedProfile = Object.assign({}, this.defaultProfile)
-        this.$refs.dob.reset() // manually clearing dob field validation error
-        this.newPeopleInHseCard = false
-        this.reloadPegawai()
       }
     },
 
