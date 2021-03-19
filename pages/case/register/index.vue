@@ -258,7 +258,7 @@
         >
           <div class="ml-4">
             <v-menu
-              v-for="(officer, i) in officers"
+              v-for="(officer, i) in officersPerCase[tab]"
               :key="officer.ident"
               v-model="officer.menu"
               :close-on-content-click="false"
@@ -428,7 +428,7 @@
                   v-for="tabitem in tabItems"
                   :key="tabitem"
                 >
-                  {{ tabitem }}
+                  {{ tabitem.toUpperCase() }}
                 </v-tab>
               </v-tabs>
             </template>
@@ -441,15 +441,14 @@
               :key="tabitem"
             >
               <v-card
-                v-if="tabitem === 'IK'"
                 flat
                 class="mt-2 mx-1"
               >
                 <v-list two-line>
                   <v-virtual-scroll
-                    :items="officersDisp"
+                    :items="staffsDisp[tabitem]"
                     :item-height="40"
-                    height="300"
+                    height="500"
                   >
                     <template #default="{ item }">
                       <!-- SUBHEADER -->
@@ -463,6 +462,7 @@
                       <v-subheader
                         v-else-if="item.divider"
                         :key="item.idx"
+                        class="mt-3"
                       >
                         <v-divider
                           :inset="item.inset"
@@ -573,15 +573,22 @@ export default {
 
   data () {
     return {
+      healthOrg: 'PKD Maran',
       tab: null,
-      tabItems: ['IK', 'MA', 'SN'],
+      tabItems: ['ik', 'ma', 'sn'],
 
       // Wbkcase Form
       newCaseRegForm: false,
       selectedCase: undefined,
       cases: [],
-      officersPerCase: [],
+      // officersPerCase: [],
+      officersPerCase: {
+        0: [],
+        1: [],
+        2: []
+      },
       officers: [],
+      staffsDisp: {},
       officersDisp: [
         { header: 'Unit Tibi' },
         { initials: 'A', name: 'personA', ident: '1', tick: false },
@@ -764,6 +771,70 @@ export default {
 
   },
 
+  async created () {
+    const payload = {
+      healthOrg: this.healthOrg
+    }
+
+    try {
+      let response
+      if (process.env.NODE_ENV === 'production') {
+        response = await this.$axios.post(
+          'https://mywabak.com/staff/get',
+          payload
+        )
+      } else {
+        response = await this.$axios.post(
+          'http://localhost:8080/staff/get',
+          payload
+        )
+      }
+      if (!response.data || Object.keys(response.data).length === 0) {
+        alert('Tiada senarai pegawai untuk jabatan ini')
+        return
+      }
+
+      const staffsDisp = {}
+      const posKeys = Object.keys(response.data)
+      for (let i = 0; i < posKeys.length; i++) {
+        const posKey = posKeys[i]
+        staffsDisp[posKey] = []
+        const staffsByPos = response.data[posKey]
+        const unitKeys = Object.keys(staffsByPos)
+        for (let j = 0; j < unitKeys.length; j++) {
+          const unitKey = unitKeys[j]
+          staffsDisp[posKey].push({ header: unitKey })
+          const staffsByUnit = staffsByPos[unitKey]
+          for (let k = 0; k < staffsByUnit.length; k++) {
+            const staff = staffsByUnit[k]
+            staffsDisp[posKey].push({
+              initials: staff.name[0].toUpperCase(),
+              name: staff.name,
+              ident: staff.ident,
+              tick: false
+            })
+            staffsDisp[posKey].push({
+              divider: true,
+              inset: true,
+              idx: k + (staffsByUnit.length * j)
+            })
+          }
+        }
+        staffsDisp[posKey].pop()
+      }
+
+      this.staffsDisp = Object.assign({}, staffsDisp)
+    } catch (error) {
+      if (error.response) {
+        alert('Masalah network, sila cuba sebentar lagi')
+      } else if (error.request) {
+        //
+      } else {
+        //
+      }
+    }
+  },
+
   methods: {
     addCase () {
       const newCase = Object.assign({}, this.editedCase)
@@ -859,21 +930,38 @@ export default {
     },
 
     removeOfficerVchip (idx) {
-      const identToRemove = this.officers[idx].ident
-      for (let i = 0; i < this.officersDisp.length; i++) {
-        const item = this.officersDisp[i]
+      // const identToRemove = this.officers[idx].ident
+      // for (let i = 0; i < this.officersDisp.length; i++) {
+      //   const item = this.officersDisp[i]
+      //   if (item.ident && item.ident === identToRemove) {
+      //     item.tick = false
+      //     break
+      //   }
+      // }
+      // this.officers.splice(idx, 1)
+
+      const ti = this.tabItems[this.tab]
+      const identToRemove = this.officersPerCase[this.tab][idx].ident
+      for (let i = 0; i < this.staffsDisp[ti].length; i++) {
+        const item = this.staffsDisp[ti][i]
         if (item.ident && item.ident === identToRemove) {
           item.tick = false
           break
         }
       }
-      this.officers.splice(idx, 1)
+      this.officersPerCase[this.tab].splice(idx, 1)
     },
 
     removeOfficerFromCase (officer) {
-      for (let i = 0; i < this.officers.length; i++) {
-        if (this.officers[i].ident === officer.ident) {
-          this.officers.splice(i, 1)
+      // for (let i = 0; i < this.officers.length; i++) {
+      //   if (this.officers[i].ident === officer.ident) {
+      //     this.officers.splice(i, 1)
+      //     return
+      //   }
+      // }
+      for (let i = 0; i < this.officersPerCase[this.tab].length; i++) {
+        if (this.officersPerCase[this.tab][i].ident === officer.ident) {
+          this.officersPerCase[this.tab].splice(i, 1)
           return
         }
       }
@@ -881,7 +969,12 @@ export default {
 
     addRemoveOfficer (officer) {
       if (officer.tick) {
-        this.officers.push({
+        // this.officers.push({
+        //   name: officer.name,
+        //   ident: officer.ident,
+        //   menu: false
+        // })
+        this.officersPerCase[this.tab].push({
           name: officer.name,
           ident: officer.ident,
           menu: false
