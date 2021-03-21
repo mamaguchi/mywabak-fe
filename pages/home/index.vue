@@ -2,6 +2,8 @@
   <div>
     <!-- color="cyan darken-3" -->
     <!-- color="blue-grey lighten-5" -->
+
+    <!-- TOOLBAR -->
     <v-toolbar
       color="teal accent-4"
       class="elevation-2"
@@ -9,7 +11,7 @@
       <v-toolbar-title>
         <!-- TITLE -->
         <span
-          class="ml-2 white--text text-h5 font-weight-regular"
+          class="ml-2 white--text text-h5 font-weight-medium"
         >
           myWabak
         </span>
@@ -44,7 +46,7 @@
     </v-toolbar>
 
     <v-container
-      style="height: 1000px;"
+      style="height: 800px;"
     >
       <v-tabs-items v-model="tab">
         <v-tab-item
@@ -54,63 +56,159 @@
           <v-card
             flat
           >
-            <v-list two-line>
-              <v-virtual-scroll
-                :items="officersDisp"
-                :item-height="40"
-                height="500"
-              >
-                <template #default="{ item }">
-                  <!-- SUBHEADER -->
-                  <v-subheader
-                    v-if="item.header"
-                    :key="item.header"
-                    v-text="item.header"
-                  />
-
-                  <!-- DIVIDER -->
-                  <v-subheader
-                    v-else-if="item.divider"
-                    :key="item.idx"
-                    class="mt-3"
-                  >
-                    <v-divider
-                      :inset="item.inset"
+            <v-card-text style="position: relative">
+              <v-list three-line>
+                <v-virtual-scroll
+                  :items="casesDisp"
+                  :item-height="40"
+                  height="500"
+                >
+                  <template #default="{ item }">
+                    <!-- SUBHEADER -->
+                    <v-subheader
+                      v-if="item.header"
+                      :key="item.header"
+                      v-text="item.header"
                     />
-                  </v-subheader>
 
-                  <!-- LIST OF OFFICERS -->
-                  <v-list-item
-                    v-else
-                  >
-                    <v-list-item-avatar>
-                      <v-avatar
-                        color="teal lighten-5"
-                        size="40"
-                        class="teal--text text--accent-4"
-                      >
-                        {{ item.initials }}
-                      </v-avatar>
-                    </v-list-item-avatar>
-
-                    <v-list-item-content>
-                      <v-list-item-title class="ml-4">
-                        {{ item.name }}
-                      </v-list-item-title>
-                    </v-list-item-content>
-
-                    <!-- :input-value="active"  -->
-                    <v-list-item-action>
-                      <v-checkbox
-                        v-model="item.tick"
-                        color="teal accent-4"
-                        @change="addRemoveOfficer(item)"
+                    <!-- DIVIDER -->
+                    <v-subheader
+                      v-else-if="item.divider"
+                      :key="item.idx"
+                      class="mt-5"
+                    >
+                      <v-divider
+                        :inset="item.inset"
                       />
-                    </v-list-item-action>
-                  </v-list-item>
-                </template>
-              </v-virtual-scroll>
-            </v-list>
+                    </v-subheader>
+
+                    <!-- LIST OF OFFICERS -->
+                    <v-list-item
+                      v-else
+                      three-line
+                      @click="viewCase(item.casename)"
+                    >
+                      <!-- CASE AVATAR -->
+                      <v-list-item-avatar>
+                        <v-avatar
+                          color="teal lighten-5"
+                          size="40"
+                          class="teal--text text--accent-4"
+                        >
+                          <span
+                            class="font-weight-medium"
+                          >
+                            {{ item.initials }}
+                          </span>
+                        </v-avatar>
+                      </v-list-item-avatar>
+
+                      <!-- CASE INFO -->
+                      <v-list-item-content>
+                        <v-list-item-title
+                          class="ml-4 font-weight-medium"
+                        >
+                          {{ item.casename }}
+                        </v-list-item-title>
+                        <v-list-item-subtitle class="text-caption ml-4 mt-1">
+                          {{ item.beginDt }}
+                        </v-list-item-subtitle>
+                        <v-list-item-subtitle class="text-caption ml-4 mt-1">
+                          {{ item.clustername }}
+                        </v-list-item-subtitle>
+                      </v-list-item-content>
+
+                      <!-- NUMBER OF POS CASE & CC -->
+                      <div class="d-flex flex-column ml-2 mt-n3">
+                        <div class="mb-1">
+                          <span
+                            class="mt-n3 red--text text--accent-3 text-caption"
+                          >
+                            {{ item.resultDt }}
+                          </span>
+
+                          <!-- DISABLED -->
+                          <v-avatar
+                            v-if="item.numPosCase==='0'"
+                            color="grey lighten-3"
+                            size="22"
+                            class="grey--text"
+                          >
+                            <span
+                              class="text-caption font-weight-medium"
+                            >
+                              {{ item.numPosCase }}
+                            </span>
+                          </v-avatar>
+
+                          <!-- ENABLED -->
+                          <v-avatar
+                            v-else
+                            color="red lighten-5"
+                            size="22"
+                            class="red--text text--accent-4"
+                          >
+                            <span
+                              class="text-caption font-weight-medium"
+                            >
+                              {{ item.numPosCase }}
+                            </span>
+                          </v-avatar>
+                        </div>
+
+                        <div class="text-right">
+                          <!-- DISABLED -->
+                          <v-avatar
+                            v-if="item.numCC==='0'"
+                            color="grey lighten-3"
+                            size="22"
+                            class="grey--text"
+                          >
+                            <span
+                              class="text-caption font-weight-medium"
+                            >
+                              {{ item.numCC }}
+                            </span>
+                          </v-avatar>
+
+                          <!-- ENABLED -->
+                          <v-avatar
+                            v-else
+                            color="blue lighten-5"
+                            size="22"
+                            class="blue--text text--accent-4"
+                          >
+                            <span
+                              class="text-caption font-weight-medium"
+                            >
+                              {{ item.numCC }}
+                            </span>
+                          </v-avatar>
+                        </div>
+                      </div>
+                    </v-list-item>
+                  </template>
+                </v-virtual-scroll>
+              </v-list>
+
+              <!-- FAB -->
+              <v-fab-transition>
+                <v-btn
+                  fab
+                  color="teal accent-4"
+                  fixed
+                  right
+                  bottom
+                  @click="newCase"
+                >
+                  <v-icon
+                    color="teal lighten-5"
+                  >
+                    mdi-plus
+                  </v-icon>
+                </v-btn>
+              </v-fab-transition>
+            </v-card-text>
           </v-card>
         </v-tab-item>
       </v-tabs-items>
@@ -135,18 +233,11 @@ export default {
       state: 'Pahang',
       district: 'Maran',
       tab: null,
-      tabItems: ['overview', 'cases', 'others'],
+      tabItems: ['keseluruhan', 'kes', 'lain'],
 
-      // Wbkcase Form
+      // Cases List
       selectedCase: undefined,
-      cases: [],
-      officersPerCase: {
-        0: [],
-        1: [],
-        2: []
-      },
-      officers: [],
-      staffsDisp: {},
+      casesDisp: [],
       officersDisp: [
         { header: 'Unit Tibi' },
         { initials: 'A', name: 'personA', ident: '1', tick: false },
@@ -154,47 +245,7 @@ export default {
         { initials: 'B', name: 'personB', ident: '2', tick: false },
         { divider: true, inset: true, idx: 1 },
         { initials: 'C', name: 'personC', ident: '3', tick: false }
-      ],
-      casenameErrMsg: '',
-      editedCase: {
-        casename: '',
-        description: '',
-        district: '',
-        state: '',
-        begindt: '',
-        enddt: ''
-      },
-      defaultCase: {
-        casename: '',
-        description: '',
-        district: '',
-        state: '',
-        begindt: '',
-        enddt: ''
-      },
-      begindtMenu: false,
-      enddtMenu: false,
-      editedIdx: undefined, // KIV to use/remove it.
-
-      // v-select Selections
-      states: [
-        'Perlis',
-        'Kedah',
-        'Pulau Pinang',
-        'Perak',
-        'Selangor',
-        'Kuala Lumpur',
-        'Negeri Sembilan',
-        'Melaka',
-        'Johor',
-        'Kelantan',
-        'Terengganu',
-        'Pahang',
-        'Sabah',
-        'Sarawak',
-        'Pulau Labuan'
       ]
-
     }
   },
 
@@ -205,9 +256,10 @@ export default {
   async created () {
     try {
       let response
-     
+
       const payload = {
-        healthOrg: this.healthOrg
+        state: this.state,
+        district: this.district
       }
 
       if (process.env.NODE_ENV === 'production') {
@@ -221,12 +273,12 @@ export default {
           payload
         )
       }
-      if (response.data.getStatus && response.data.getStatus==='NOROWS') {
-        //
+      if (response.data.getStatus && response.data.getStatus === 'NOROWS') {
+        alert('Tiada kes di dalam daerah anda')
         return
       }
-      
-      const casesDisp = []      
+
+      const casesDisp = []
       for (let i = 0; i < response.data.cases.length; i++) {
         const wbkcase = response.data.cases[i]
 
@@ -259,17 +311,24 @@ export default {
     }
   },
 
-  methods: {   
-    addRemoveOfficer (officer) {
-      if (officer.tick) {
-        this.officersPerCase[this.tab].push({
-          name: officer.name,
-          ident: officer.ident,
-          menu: false
-        })
-      } else {
-        this.removeOfficerFromCase(officer)
-      }
+  methods: {
+    newCase () {
+      this.$router.push({
+        path: '/case/mode1',
+        query: {
+          healthOrg: this.healthOrg
+        }
+      })
+    },
+
+    viewCase (casename) {
+      this.$router.push({
+        path: '/case/mode2',
+        query: {
+          healthOrg: this.healthOrg,
+          casename
+        }
+      })
     },
 
     prepareOfficersPerCasePayload () {

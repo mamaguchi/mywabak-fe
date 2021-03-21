@@ -2,8 +2,8 @@
   <div>
     <wbk-case-form
       mode="2"
-      health-org="PKD Maran"
-      casename-to-edit="new case"
+      :health-org="healthOrg"
+      :casename-to-edit="casename"
     />
   </div>
 </template>
@@ -15,6 +15,18 @@ export default {
 
   components: {
     WbkCaseForm
+  },
+
+  data () {
+    return {
+      healthOrg: '',
+      casename: ''
+    }
+  },
+
+  created () {
+    this.healthOrg = this.$route.query.healthOrg
+    this.casename = this.$route.query.casename
   }
 
 }

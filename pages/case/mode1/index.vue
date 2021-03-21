@@ -2,7 +2,7 @@
   <div>
     <wbk-case-form
       mode="1"
-      health-org="PKD Maran"
+      :health-org="healthOrg"
     />
   </div>
 </template>
@@ -14,6 +14,16 @@ export default {
 
   components: {
     WbkCaseForm
+  },
+
+  data () {
+    return {
+      healthOrg: ''
+    }
+  },
+
+  created () {
+    this.healthOrg = this.$route.query.healthOrg
   }
 
 }

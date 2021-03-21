@@ -1,5 +1,77 @@
 <template>
   <div>
+    <!-- TOOLBAR -->
+    <v-toolbar
+      color="teal accent-4"
+      class="elevation-2"
+    >
+      <!-- GO BACK ONE PAGE -->
+      <v-icon
+        left
+        style="cursor: pointer"
+        color="white"
+        @click="goBackOnePage"
+      >
+        mdi-arrow-left
+      </v-icon>
+
+      <!-- TITLE -->
+      <v-toolbar-title>
+        <span
+          class="white--text text-h5 font-weight-medium"
+        >
+          Pengurusan Kes COVID
+        </span>
+      </v-toolbar-title>
+
+      <!-- ICON -->
+      <!-- <v-icon
+        right
+        color="blue-grey darken-2"
+      >
+        {{ pegawaiBertugasIcon }}
+      </v-icon> -->
+
+      <!-- TABS -->
+      <template #extension>
+        <!-- ADD MODE TABS -->
+        <v-tabs
+          v-if="mode==='1'"
+          v-model="tbTab"
+          grow
+          color="white"
+          class="ml-1"
+        >
+          <v-tabs-slider color="white" />
+
+          <v-tab
+            v-for="tbTabitem in tbTabItemsAddMode"
+            :key="tbTabitem"
+          >
+            {{ tbTabitem.toUpperCase() }}
+          </v-tab>
+        </v-tabs>
+
+        <!-- EDIT MODE TABS -->
+        <v-tabs
+          v-else
+          v-model="tbTab"
+          grow
+          color="white"
+          class="ml-1"
+        >
+          <v-tabs-slider color="white" />
+
+          <v-tab
+            v-for="tbTabitem in tbTabItemsEditMode"
+            :key="tbTabitem"
+          >
+            {{ tbTabitem.toUpperCase() }}
+          </v-tab>
+        </v-tabs>
+      </template>
+    </v-toolbar>
+
     <!-- 1ST SHEET -->
     <v-sheet
       id="form"
@@ -8,7 +80,7 @@
     >
       <v-row dense>
         <!-- TITLE -->
-        <v-col
+        <!-- <v-col
           cols="12"
           md="10"
           sm="10"
@@ -19,7 +91,7 @@
           >
             Pengurusan Kes COVID  {{ mode }}
           </span>
-        </v-col>
+        </v-col> -->
 
         <!-- V-ICON: TO DISPLAY NEW CASE FORM -->
         <v-col
@@ -672,19 +744,22 @@ export default {
       type: String,
       default: '1'
     },
-    casenameToEdit: {
-      type: String,
-      default: ''
-    },
     healthOrg: {
       type: String,
       required: true
+    },
+    casenameToEdit: {
+      type: String,
+      default: ''
     }
   },
 
   data () {
     return {
       // healthOrg: 'PKD Maran',
+      tbTabItemsAddMode: ['kes baru'],
+      tbTabItemsEditMode: ['rumusan', 'edit'],
+      tbTab: null,
       tab: null,
       tabItems: ['ik', 'ma', 'sn'],
 
@@ -876,6 +951,11 @@ export default {
   },
 
   methods: {
+    goBackOnePage () {
+      // this.$router.push('/home')
+      this.$router.go(-1)
+    },
+
     addCase () {
       const newCase = Object.assign({}, this.editedCase)
       this.cases.push(newCase)
