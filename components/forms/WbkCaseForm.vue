@@ -29,7 +29,8 @@
           xs="5"
           class="ml-auto mt-16 text-left"
         >
-          <div>
+          <!-- MODE 1 -->
+          <div v-if="mode==='1'">
             <span
               class="text-subtitle-2 font-weight-medium"
             >
@@ -54,6 +55,27 @@
               class="mt-n1"
             >
               mdi-file-plus
+            </v-icon>
+          </div>
+
+          <!-- MODE 2 -->
+          <div v-else-if="mode!=='1'">
+            <span
+              class="text-subtitle-2 font-weight-medium"
+            >
+              1.
+            </span>
+            <span
+              class="ml-2 mb-n2 text-subtitle-1 font-weight-light"
+            >
+              Edit Kes
+            </span>
+            <v-icon
+              right
+              color="blue-grey darken-2"
+              class="mt-n1"
+            >
+              mdi-file-edit
             </v-icon>
           </div>
         </v-col>
@@ -649,12 +671,20 @@ export default {
     mode: {
       type: String,
       default: '1'
+    },
+    casenameToEdit: {
+      type: String,
+      default: ''
+    },
+    healthOrg: {
+      type: String,
+      required: true
     }
   },
 
   data () {
     return {
-      healthOrg: 'PKD Maran',
+      // healthOrg: 'PKD Maran',
       tab: null,
       tabItems: ['ik', 'ma', 'sn'],
 
@@ -743,34 +773,63 @@ export default {
   },
 
   async created () {
-    const payload = {
-      healthOrg: this.healthOrg
-    }
-
     try {
       let response
-      if (process.env.NODE_ENV === 'production') {
-        response = await this.$axios.post(
-          'https://mywabak.com/staff/get',
-          payload
-        )
+
+      if (this.mode === '1') {
+        const payload = {
+          healthOrg: this.healthOrg
+        }
+
+        if (process.env.NODE_ENV === 'production') {
+          response = await this.$axios.post(
+            'https://mywabak.com/staff/get',
+            payload
+          )
+        } else {
+          response = await this.$axios.post(
+            'http://localhost:8080/staff/get',
+            payload
+          )
+        }
+        if (!response.data.staffs || Object.keys(response.data.staffs).length === 0) {
+          alert('Tiada senarai pegawai untuk jabatan ini')
+          return
+        }
       } else {
-        response = await this.$axios.post(
-          'http://localhost:8080/staff/get',
-          payload
-        )
-      }
-      if (!response.data || Object.keys(response.data).length === 0) {
-        alert('Tiada senarai pegawai untuk jabatan ini')
-        return
+        const payload = {
+          healthOrg: this.healthOrg,
+          casename: this.casenameToEdit
+        }
+
+        if (process.env.NODE_ENV === 'production') {
+          response = await this.$axios.post(
+            'https://mywabak.com/staff/assigned/get',
+            payload
+          )
+        } else {
+          response = await this.$axios.post(
+            'http://localhost:8080/staff/assigned/get',
+            payload
+          )
+        }
+        if (!response.data.staffs || Object.keys(response.data.staffs).length === 0) {
+          alert('Tiada senarai pegawai untuk jabatan ini')
+          return
+        }
+        this.editedCase.casename = this.casenameToEdit
+        this.editedCase.begindt = response.data.begindt
+        this.editedCase.description = response.data.description
+        this.editedCase.district = response.data.district
+        this.editedCase.state = response.data.state
       }
 
       const staffsDisp = {}
-      const posKeys = Object.keys(response.data)
+      const posKeys = Object.keys(response.data.staffs)
       for (let i = 0; i < posKeys.length; i++) {
         const posKey = posKeys[i]
         staffsDisp[posKey] = []
-        const staffsByPos = response.data[posKey]
+        const staffsByPos = response.data.staffs[posKey]
         const unitKeys = Object.keys(staffsByPos)
         for (let j = 0; j < unitKeys.length; j++) {
           const unitKey = unitKeys[j]
@@ -782,8 +841,18 @@ export default {
               initials: staff.name[0].toUpperCase(),
               name: staff.name,
               ident: staff.ident,
-              tick: false
+              tick: this.mode === '1' ? false : staff.assigned
             })
+
+            if (this.mode !== '1' && staff.assigned) {
+              const posNumericKey = this.tabItems.indexOf(posKey)
+              this.officersPerCase[posNumericKey].push({
+                name: staff.name,
+                ident: staff.ident,
+                menu: false
+              })
+            }
+
             staffsDisp[posKey].push({
               divider: true,
               inset: true,
@@ -871,29 +940,46 @@ export default {
         begindt: this.editedCase.begindt,
         enddt: this.editedCase.enddt,
         description: this.editedCase.description,
-        states: [this.editedCase.state],
-        districts: [this.editedCase.district],
+        state: this.editedCase.state,
+        district: this.editedCase.district,
         assignedStaffs: this.prepareOfficersPerCasePayload()
       }
 
       try {
         let response
-        if (process.env.NODE_ENV === 'production') {
-          response = await this.$axios.post(
-            'https://mywabak.com/wbkcase/add',
-            payload
-          )
+
+        if (this.mode === '1') {
+          if (process.env.NODE_ENV === 'production') {
+            response = await this.$axios.post(
+              'https://mywabak.com/wbkcase/add',
+              payload
+            )
+          } else {
+            response = await this.$axios.post(
+              'http://localhost:8080/wbkcase/add',
+              payload
+            )
+          }
+          if (response.data.addStatus === '1') {
+            alert('Pendaftaran kes baru berjaya')
+          } else if (response.data.addStatus === 'CASENAMEEXISTS') {
+            this.casenameErrMsg = 'Nama ini telah wujud, sila pilih nama yang lain'
+            document.querySelector('#casename').scrollIntoView({ behavior: 'smooth', block: 'center' })
+          }
         } else {
-          response = await this.$axios.post(
-            'http://localhost:8080/wbkcase/add',
-            payload
-          )
-        }
-        if (response.data.addStatus === '1') {
-          alert('Pendaftaran kes baru berjaya')
-        } else if (response.data.addStatus === 'CASENAMEEXISTS') {
-          this.casenameErrMsg = 'Nama ini telah wujud, sila pilih nama yang lain'
-          document.querySelector('#casename').scrollIntoView({ behavior: 'smooth', block: 'center' })
+          if (process.env.NODE_ENV === 'production') {
+            response = await this.$axios.post(
+              'https://mywabak.com/wbkcase/staff/assigned/set',
+              payload
+            )
+          } else {
+            response = await this.$axios.post(
+              'http://localhost:8080/wbkcase/staff/assigned/set',
+              payload
+            )
+          }
+
+          alert('Kes berjaya dikemaskinikan')
         }
       } catch (error) {
         if (error.response) {
